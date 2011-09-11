@@ -1,0 +1,52 @@
+TENER EN CUENTA QUE EL TIEMPO DE CPU ES PARA TODOS 20 PARA ELEGIR EL QUANTUM!
+
+
+Ecuanimidad (fairness): que cada proceso reciba una dosis "justa" de CPU (para
+alguna definicion de justicia)
+
+Todos los procesos reciben una dosis justa, si por justa se entiende que todos
+reciben el mismo quantum. Esto no tiene que ver con algun valor de quantum, sino
+que es consecuencia de ser un scheduler Round Robin
+
+
+Eficiencia: tratar de que la CPU este ocupada todo el tiempo.
+
+No importa el valor de quantum elegido, el scheduler siempre trata
+de que esté ocupado el CPU. Si un proceso de blockea, entonces comienza a
+ejecturar otro.
+
+
+Carga del sistema: minimizar la cant. de procesos listos que estan esperando
+CPU.
+
+... No se me ocurrio nada razonable...
+
+
+Tiempo de respuesta: minimizar el tiempo de respuesta percibido por los usuarios
+interactivos.
+
+Valores pequeños del quantum parecen que mejorarian esta medida ya que estan
+menos tiempo desde que estan en estado listo hasta que vuelven a ejecutar
+
+
+Latencia: minimizar el tiempo requerido para que un proceso empiece a dar
+resultados.
+No pudimos ver cuando un proceso comienza a dar resultados
+
+
+Tiempo de ejecucion: minimizar el tiempo total que le toma a un proceso ejecutar
+completamente.
+
+
+
+Rendimiento (throughput): maximizar el numero de procesos terminados por unidad
+de tiempo.
+
+
+
+
+Liberacion de recursos: hacer que terminen cuanto antes los
+procesos que tiene reservados mas recursos.
+
+No importa el quantum, esta medida se ignora totalmente. El scheduler no tiene
+ninguna nocion de los recursos usados por una tarea
