@@ -1,0 +1,5 @@
+Dos tareas, cada una hace:
+5 ciclos de CPU
+2 ciclos IO
+
+Como para hacer IO tiene que hacer primero un ciclo de CPU es que se ve que consume 6 ciclos hasta bloquearse. Cuando se bloquea la tarea 0 se pasa a la tarea 1 que consume 6 ciclos tambien. Cuando se bloquea vuelve a la tarea 0, que ejecuta el return y va a la tarea idle porque tarea 1 sigue bloqueada. Cuando tarea 1 se desbloquea, se ejecuta el return de esta.

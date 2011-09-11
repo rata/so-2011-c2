@@ -1,0 +1,1 @@
+Dos tareas que usan 10 ciclos cada una de CPU (solo CPU). El quantum es 5, asique vemos como cambian a los 5 y se usa un ciclo mas por el return
