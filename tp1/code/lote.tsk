@@ -1,0 +1,17 @@
+# Las líneas en blanco o que empiezan con un # son ignoradas.
+
+TaskAlterno 6 2 0 2 1 2 0
+TaskAlterno 6 1 1 10 1
+@6:
+TaskCPU 11
+TaskCPU 8
+@4:
+TaskCPU 7
+@60:
+*3 TaskCPU 7
+
+#TaskCPU 20
+#TaskCPU 15
+#TaskCPU 30
+
+# TaskIO 30
