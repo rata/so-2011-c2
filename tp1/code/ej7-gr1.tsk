@@ -1,0 +1,11 @@
+# La cantidad de uso de CPU total debe ser la misma para todas las tareas
+# La cantidad de bloqueos se eligio usando numeros random entre 1 y 19 (ambos
+# inclusive)
+# El cs DEBE ser 1 (enunciado). Hay que jugar solo con el quantum
+#./simusched ej7-gr1.tsk 1 SchedRR 21 | ./graphsched.py > test10.png ; gqview test10.png
+
+TaskBatch 20 8
+TaskBatch 20 13
+TaskBatch 20 9
+TaskBatch 20 17
+TaskBatch 20 19
