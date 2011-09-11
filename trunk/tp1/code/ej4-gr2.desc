@@ -1,5 +1,13 @@
+./simusched ej4-gr2.tsk 0 SchedRR 5 | ./graphsched.py > ej4-gr2.png
+
 Dos tareas, cada una hace:
 5 ciclos de CPU
 2 ciclos IO
 
-Como para hacer IO tiene que hacer primero un ciclo de CPU es que se ve que consume 6 ciclos hasta bloquearse. Cuando se bloquea la tarea 0 se pasa a la tarea 1 que consume 6 ciclos tambien. Cuando se bloquea vuelve a la tarea 0, que ejecuta el return y va a la tarea idle porque tarea 1 sigue bloqueada. Cuando tarea 1 se desbloquea, se ejecuta el return de esta.
+El primer ciclo de ambas tareas no es ocupado por la tarea en sí, sino que es
+necesario al cargar la tarea pro primera vez. Luego hace los 5 ciclos de CPU
+(interrumpidos porque se excede el cuantum y switchea a la otra tarea), luego se
+bloquea 2 ciclos. Luego se utiliza un ciclo de CPU mas porque al desbloquearse
+la tarea se consume un ciclo.
+Es importante notar que cuando ambas tareas estan bloqueadas se ejecuta la tarea
+idle y ni bien se desbloquea una se la ejecuta.
