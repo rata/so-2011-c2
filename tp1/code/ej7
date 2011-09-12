@@ -45,16 +45,17 @@ tarea en ejecutarse es:
 
 q (n - 1)
 
-Supongamos entonces que la tarea tarda m ciclos en empezar a dar resultados y q
-<= m. Luego, esta tarea para ejecutar m ciclos requiere ejecutarse una cantidad
-k de veces. Es decir, sea k el mínimo tal que: m <= q * k. Y la demora al esperar
-ejecutarse k veces es:
+Supongamos entonces que la tarea tarda m ciclos en empezar a dar resultados y
+que m = q * k (k, q y m enteros). Luego, esta tarea para ejecutar m ciclos
+requiere ejecutarse una cantidad k de veces. Y la demora al esperar ejecutarse k
+veces es:
 
-k q (n - 1) <= m (n - 1)
+k q (n - 1) = m (n - 1)
 
-Es decir, en el peor caso, es independiente del quantum la demora que tenga un
-proceso en empezar a dar resultados (si el quantum es menor o igual a la
-cantidad de ciclos que requiere el proceso en empezar a dar resultados)
+Es decir, en el peor caso y con m multiplo de q, es independiente del quantum la
+demora que tenga un proceso en empezar a dar resultados (si el quantum es menor
+o igual a la cantidad de ciclos que requiere el proceso en empezar a dar
+resultados)
 
 
 
