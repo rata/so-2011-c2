@@ -24,12 +24,13 @@ void SchedLottery::unblock(int pid) {
 	//Busco la tarea en la lista de bloqueadas.
 	for (unsigned int i = 0; i < blocked_tasks.size(); i++) {
 		if(blocked_tasks[i].first == pid) {
+			//Sumo la cantidad de tickets que participan del sorteo.
+			tot_tickets += blocked_tasks[i].second;
+			
 			//La agrego en la lista de disponibles y la elimino de la lista de bloqueadas.
 			tickets.push_back(blocked_tasks[i]);
 			blocked_tasks.erase(blocked_tasks.begin() + i);
 			
-			//Sumo la cantidad de tickets que participan del sorteo.
-			tot_tickets += blocked_tasks[i].second;
 			return;
 		}
 	}
@@ -55,11 +56,6 @@ int SchedLottery::tick(const enum Motivo m) {
 	if (m == EXIT) {
 		// Si el pid actual terminó, sigue el próximo.
 		tot_tickets -= ticket_actual.second;
-		if (tickets.empty()) {
-			return IDLE_TASK;
-		} else {			
-			//
-		}
 	} else if (m == BLOCK) {
 // 		cout << "contador: " << contador << endl;
 		contador--;
@@ -83,20 +79,22 @@ int SchedLottery::tick(const enum Motivo m) {
 	// Como se llama a tick cuando YA PASO el ciclo, cuando llega a 1 la
 	// variable contador es que ya se le acabo el quantum
 	} else if (contador == 1 && current_pid() != IDLE_TASK) {
+		//Si se acabó el quantum del proceso lo guardo en la lista
+		//de disponibles con 1 ticket ya que le voy a sacar el control
 		tickets.push_back(make_pair(current_pid(), 1));
-		
+		tot_tickets++;
 	} else {
-		if(current_pid() == IDLE_TASK && !tickets.empty()) {
-			
-		} else {
-			// Siempre sigue el pid actual mientras no termine.
-			if(contador > 0) 
-				contador--;
+		// Siempre sigue el pid actual mientras no termine.
+		// O esté ejecutando el IDLE_TASK y haya algún proceso disponible.
+		if(!(current_pid() == IDLE_TASK && !tickets.empty())) {
+			contador--;
 			return current_pid();
 		}
 	}
+	
 
-	if(tickets.size() == 0) {
+	//Elijo el proceso siguiente.
+	if(tickets.empty()) {
 		return IDLE_TASK;
 	}
 	
@@ -105,11 +103,13 @@ int SchedLottery::tick(const enum Motivo m) {
 	int ticket_ganador = 0;
 	if (tot_tickets > 1) 
 		ticket_ganador = (rand() % (tot_tickets - 1));
+	
+	//Busco al ganador del sorteo
 	int suma_parcial = 0;
-
 	for (unsigned int i = 0; i < tickets.size(); i++) {
 		suma_parcial += tickets[i].second;
 		if(suma_parcial >= ticket_ganador) {
+			//Le asigno el control del procesador y lo saco de la lista
 			ticket_actual = tickets[i];
 			int sig = tickets[i].first;
 			tickets.erase(tickets.begin() + i);
