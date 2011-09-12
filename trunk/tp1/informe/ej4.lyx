@@ -36,6 +36,7 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
@@ -45,11 +46,12 @@ Ejercico 4
 \end_layout
 
 \begin_layout Standard
-Dos tareas que usan 10 ciclos cada una de CPU (solo CPU).
- El quantum es 5, asique vemos como cambian a los 5 y se usa un ciclo mas
- (11 ciclos) porque un ciclo se usa al cargar la tarea por primera vez (y
- aunque esta no se esta ejecutando se le atribuye a esta el tiempo de CPU)
- 
+Para mostrar que el comportamiento es el esperado se hicieron algunas pruebas.
+ La primera consiste de dos tareas que usan 10 ciclos cada una de CPU.
+ El quantum usado es 5, por lo que se ve que cambian a los 5 ciclos.
+ En total se usa un ciclo mas (11 ciclos) porque, según pudimos debugguear
+ el simulador, un ciclo se usa al cargar la tarea por primera vez (y aunque
+ esta tarea no se esta ejecutando se le atribuye el tiempo de CPU)
 \end_layout
 
 \begin_layout Standard
@@ -59,7 +61,7 @@ wide false
 sideways false
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../code/ej4-gr1.png
 	width 16cm
@@ -75,16 +77,18 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-Dos tareas, cada una hace: 5 ciclos de CPU 2 ciclos IO
+La segunda consiste también en dos tareas, pero en este caso cada un hace:
+ 5 ciclos de CPU y luego 2 ciclos IO.
+ Y como quantum se usó 5 ciclos también.
 \end_layout
 
 \begin_layout Standard
 El primer ciclo de ambas tareas no es ocupado por la tarea en sí, sino que
- es necesario al cargar la tarea pro primera vez.
- Luego hace los 5 ciclos de CPU (interrumpidos porque se excede el cuantum
- y switchea a la otra tarea), luego se bloquea 2 ciclos.
- Luego se utiliza un ciclo de CPU mas porque al desbloquearse la tarea se
- consume un ciclo.
+ es necesario al cargar la tarea por primera vez.
+ Luego hace los 5 ciclos de CPU, interrumpidos porque se excede el quantum
+ y switchea a la otra tarea, y luego se bloquea 2 ciclos.
+ Desspués de desbloquearse se utiliza un ciclo de CPU más porque al desbloquears
+e la tarea se consume un ciclo.
  Es importante notar que cuando ambas tareas estan bloqueadas se ejecuta
  la tarea idle y ni bien se desbloquea una se la ejecuta.
  
@@ -107,17 +111,22 @@ status collapsed
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-le renueva el quantum a una tarea porque la otra estaba bloqueada 
+La tercer prueba consistió en solo una tarea ejecutando, para verificar
+ que no haya ningún problema con este caso 
+\begin_inset Quotes eld
+\end_inset
+
+borde
+\begin_inset Quotes erd
+\end_inset
+
+ y que se le renueve el quantum:
 \end_layout
 
 \begin_layout Standard
@@ -143,7 +152,9 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-
+La cuarta prueba es similar a la anterior, pero se probó que se le renueve
+ el quantum si la otra tarea sigue bloqueada, como muestra el gráfico a
+ continuación:
 \end_layout
 
 \begin_layout Standard
@@ -152,10 +163,6 @@ placement H
 wide false
 sideways false
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Graphics
