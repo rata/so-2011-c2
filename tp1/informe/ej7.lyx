@@ -1,0 +1,231 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Ejercicio 7
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Ecuanimidad (fairness)
+\series default
+: que cada proceso reciba una dosis "justa" de CPU (para alguna definicion
+ de justicia)
+\end_layout
+
+\begin_layout Standard
+Todos los procesos reciben una dosis justa, si por justa se entiende que
+ todos reciben el mismo quantum.
+ Esto no tiene que ver con algun valor de quantum, sino que es consecuencia
+ de ser un scheduler Round Robin
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Eficiencia
+\series default
+: tratar de que la CPU este ocupada todo el tiempo.
+\end_layout
+
+\begin_layout Standard
+No importa el valor de quantum elegido, el scheduler siempre trata de que
+ esté ocupado el CPU.
+ Si un proceso de blockea, entonces comienza a ejecturar otro.
+ Solo se ejecutara el proceso idle cuando ningun otro proceso pueda ejecutarse,
+ y se lo dejará de ejecutar ni bien otro proceso este en estado listo.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Carga del sistema
+\series default
+: minimizar la cant.
+ de procesos listos que estan esperando CPU.
+\end_layout
+
+\begin_layout Standard
+...
+ No se me ocurrio nada razonable...
+ No estoy seguro si entiendo lo que es bien tampoco...
+ :S
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Tiempo de respuesta
+\series default
+: minimizar el tiempo de respuesta percibido por los usuarios interactivos.
+\end_layout
+
+\begin_layout Standard
+Valores pequeños del quantum parecen mejorar esta medida ya que estan menos
+ tiempo desde que estan en estado listo hasta que vuelven a ejecutar.
+ Luego, el tiempo de respuesta percibido por el usuario es menor.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Latencia
+\series default
+: minimizar el tiempo requerido para que un proceso empiece a dar resultados.
+\end_layout
+
+\begin_layout Standard
+No pudimos ver luego de cuantos ciclos un proceso comienza a dar resultados.
+ El simulador no nos ayuda para este escenario.
+ Sin embargo, se puede ver que siendo q el quantum y n la cantidad de procesos,
+ en peor caso el tiempo que tardara una tarea en ejecutarse es:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $q\times(n-1)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Supongamos entonces que la tarea tarda m ciclos en empezar a dar resultados
+ y que 
+\begin_inset Formula $m=q\times k$
+\end_inset
+
+ (k, q y m enteros).
+ Luego, esta tarea para ejecutar m ciclos requiere ejecutarse una cantidad
+ k de veces.
+ Y la demora al esperar ejecutarse k veces es:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $k\times q\times(n-1)=m\times(n-1)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Es decir, en el peor caso y con m multiplo de q, es independiente del quantum
+ la demora que tenga un proceso en empezar a dar resultados (si el quantum
+ es menor o igual a la cantidad de ciclos que requiere el proceso en empezar
+ a dar resultados) 
+\end_layout
+
+\begin_layout Standard
+(Graficos con q=21 y q=2!)
+\end_layout
+
+\begin_layout Standard
+Aclaracion previa (ver como ponerlo bien): el ciclo en el que termina el
+ 1º proceso al cabo de varias corridas parece estar bastante estable, por
+ lo que no se ve muy afectado por el random de cuando son la tareas de IO.
+ Lo mismo paso para el ciclo en el que termina el segundo proceso, etc.
+ Esto paso tanto con q=21 como con q=2.
+ Por lo que se eligió poner un solo gráfico con q=21 y q=2, ya que parecen
+ ser significativos.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Tiempo de ejecucion
+\series default
+: minimizar el tiempo total que le toma a un proceso ejecutar completamente.
+\end_layout
+
+\begin_layout Standard
+Con q=21 (mayor al tiempo de CPU usado por todas las tareas) se puede ver
+ que la distribución de en qué ciclo terminan los procesos se minimiza con
+ respecto al gráfico con q=2.
+ De hecho, el promedio de la cantidad de ciclos que toma en finalizar la
+ tarea con q=21 es: (108+120+145+164+176)/5.0 = 142.59999999999999 En cambio,
+ con q=2, el promedio es: (135+140+152+169+180)/5.0 = 155.19999999999999
+\end_layout
+
+\begin_layout Standard
+OJO: corregir las cuentas de arriba al generar las imagenes! (aunque la
+ conclusion deberia ser la misma: mejor con q=21)
+\end_layout
+
+\begin_layout Standard
+Es decir, un quantum mas grande parece optimizar el tiempo de ejecución.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Rendimiento (throughput)
+\series default
+: maximizar el numero de procesos terminados por unidad de tiempo.
+\end_layout
+
+\begin_layout Standard
+En el gráfico se puede ver que para cualquier intervalo de tiempo, con q=21,
+ el numero de procesos terminados por unidad de tiempo es siempre mayor
+ o igual a el numero de procesos terminados por unidad de tiempo con q=2
+\end_layout
+
+\begin_layout Standard
+Es decir, un quantum mas grande parece maximizar el throughput.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Liberacion de recursos
+\series default
+: hacer que terminen cuanto antes los procesos que tiene reservados mas
+ recursos.
+\end_layout
+
+\begin_layout Standard
+No importa el quantum, esta medida se ignora totalmente.
+ El scheduler no tiene ninguna nocion de los recursos usados por una tarea
+ 
+\end_layout
+
+\end_body
+\end_document
