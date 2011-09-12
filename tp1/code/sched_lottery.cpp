@@ -37,7 +37,6 @@ void SchedLottery::unblock(int pid) {
 }
 
 int SchedLottery::tick(const enum Motivo m) {
-	ticket_actual.second = 1;
 // 	cout << "tickets: " << endl;
 // 	for (unsigned int i = 0; i < tickets.size(); i++) {
 // 		cout << "[" << tickets[i].second << "]";
@@ -55,14 +54,16 @@ int SchedLottery::tick(const enum Motivo m) {
 
 	if (m == EXIT) {
 		// Si el pid actual terminó, sigue el próximo.
-		tot_tickets -= ticket_actual.second;
+		
 	} else if (m == BLOCK) {
 // 		cout << "contador: " << contador << endl;
 		contador--;
 		int ciclos_usados = quantum - contador ;
 // 		cout << "usados: " << ciclos_usados << endl;
 		
-		int tickets_recompenza;
+		//Si se acabó el quantum no le doy recompenza
+		//Si no le doy como recompenza la fracción de tiempo que usó.
+		int tickets_recompenza = 1;
 		if(ciclos_usados > 0) {
 			tickets_recompenza = quantum / ciclos_usados;
 		}
@@ -74,7 +75,6 @@ int SchedLottery::tick(const enum Motivo m) {
 
 		//Resto la cantidad de tickets que tenía la tarea que se bloqueó.
 		//Su valor siempre es uno ya que la tarea se estaba ejecutando.
-		tot_tickets -= ticket_actual.second;
 
 	// Como se llama a tick cuando YA PASO el ciclo, cuando llega a 1 la
 	// variable contador es que ya se le acabo el quantum
@@ -109,11 +109,14 @@ int SchedLottery::tick(const enum Motivo m) {
 	for (unsigned int i = 0; i < tickets.size(); i++) {
 		suma_parcial += tickets[i].second;
 		if(suma_parcial >= ticket_ganador) {
+			tot_tickets -= ticket_actual.second;
 			//Le asigno el control del procesador y lo saco de la lista
 			ticket_actual = tickets[i];
 			int sig = tickets[i].first;
 			tickets.erase(tickets.begin() + i);
 			contador = quantum;
+			//Cuando cargo a un proceso sólo le dejamos un ticket.
+			ticket_actual.second = 1;
 			
 			return sig;
 		}
