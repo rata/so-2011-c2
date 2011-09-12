@@ -1,0 +1,180 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Ejercico 4
+\end_layout
+
+\begin_layout Standard
+Dos tareas que usan 10 ciclos cada una de CPU (solo CPU).
+ El quantum es 5, asique vemos como cambian a los 5 y se usa un ciclo mas
+ (11 ciclos) porque un ciclo se usa al cargar la tarea por primera vez (y
+ aunque esta no se esta ejecutando se le atribuye a esta el tiempo de CPU)
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename ../code/ej4-gr1.png
+	width 16cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dos tareas, cada una hace: 5 ciclos de CPU 2 ciclos IO
+\end_layout
+
+\begin_layout Standard
+El primer ciclo de ambas tareas no es ocupado por la tarea en sí, sino que
+ es necesario al cargar la tarea pro primera vez.
+ Luego hace los 5 ciclos de CPU (interrumpidos porque se excede el cuantum
+ y switchea a la otra tarea), luego se bloquea 2 ciclos.
+ Luego se utiliza un ciclo de CPU mas porque al desbloquearse la tarea se
+ consume un ciclo.
+ Es importante notar que cuando ambas tareas estan bloqueadas se ejecuta
+ la tarea idle y ni bien se desbloquea una se la ejecuta.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej4-gr2.png
+	width 16cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+le renueva el quantum a una tarea porque la otra estaba bloqueada 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej4-gr3.png
+	width 16cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej4-gr4.png
+	width 16cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
