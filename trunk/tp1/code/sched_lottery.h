@@ -12,6 +12,13 @@ class SchedLottery : public SchedBase {
     virtual int tick(const enum Motivo m);
 
   private:
+    std::vector<std::pair<int, int> > tickets;
+    std::vector<std::pair<int, int> > blocked_tasks;
+    std::pair<int, int> ticket_actual;
+    int tot_tickets;
+    int semilla;
+    int quantum;
+    int contador;
 };
 
 #endif
