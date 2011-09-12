@@ -1,4 +1,6 @@
 TENER EN CUENTA QUE EL TIEMPO DE CPU ES PARA TODOS 20 PARA ELEGIR EL QUANTUM!
+./simusched ej7-gr1.tsk 1 SchedRR 2 | ./graphsched.py > test10.png ; gqview test10.png
+
 
 
 Ecuanimidad (fairness): que cada proceso reciba una dosis "justa" de CPU (para
@@ -13,36 +15,83 @@ Eficiencia: tratar de que la CPU este ocupada todo el tiempo.
 
 No importa el valor de quantum elegido, el scheduler siempre trata
 de que esté ocupado el CPU. Si un proceso de blockea, entonces comienza a
-ejecturar otro.
+ejecturar otro. Solo se ejecutara el proceso idle cuando ningun otro proceso
+pueda ejecutarse, y se lo dejará de ejecutar ni bien otro proceso este en estado
+listo.
 
 
 Carga del sistema: minimizar la cant. de procesos listos que estan esperando
 CPU.
 
-... No se me ocurrio nada razonable...
+... No se me ocurrio nada razonable... No estoy seguro si entiendo lo que es
+bien tampoco... :S
 
 
 Tiempo de respuesta: minimizar el tiempo de respuesta percibido por los usuarios
 interactivos.
 
-Valores pequeños del quantum parecen que mejorarian esta medida ya que estan
-menos tiempo desde que estan en estado listo hasta que vuelven a ejecutar
+Valores pequeños del quantum parecen mejorar esta medida ya que estan menos
+tiempo desde que estan en estado listo hasta que vuelven a ejecutar. Luego, el
+tiempo de respuesta percibido por el usuario es menor.
 
 
 Latencia: minimizar el tiempo requerido para que un proceso empiece a dar
 resultados.
-No pudimos ver cuando un proceso comienza a dar resultados
 
+No pudimos ver luego de cuantos ciclos un proceso comienza a dar resultados. El
+simulador no nos ayuda para este escenario. Sin embargo, se puede ver que siendo
+q el quantum y n la cantidad de procesos, en peor caso el tiempo que tardara una
+tarea en ejecutarse es:
+
+q (n - 1)
+
+Supongamos entonces que la tarea tarda m ciclos en empezar a dar resultados y q
+<= m. Luego, esta tarea para ejecutar m ciclos requiere ejecutarse una cantidad
+k de veces. Es decir, m = q * k. Y la demora al esperar ejecutarse k veces es:
+
+k q (n - 1) = m (n - 1)
+
+Es decir, en el peor caso, es independiente del quantum la demora que tenga un
+proceso en empezar a dar resultados (si el quantum es menor o igual a la
+cantidad de ciclos que requiere el proceso en empezar a dar resultados)
+
+
+
+
+
+Graficos con q=21 y q=2
+
+Aclaracion previa: el ciclo en el que termina el 1º proceso al cabo de varias
+corridas parece estar bastante estable, por lo que no se ve muy afectado por el
+random de cuando son la tareas de IO. Lo mismo paso para el ciclo en el que
+termina el segundo proceso, etc. Esto paso tanto con q=21 como con q=2. Por lo
+que se eligió poner un solo gráfico con q=21 y q=2, ya que parecen ser
+significativos.
 
 Tiempo de ejecucion: minimizar el tiempo total que le toma a un proceso ejecutar
 completamente.
 
+Con q=21 (mayor al tiempo de CPU usado por todas las tareas) se puede ver que la
+distribución de en qué ciclo terminan los procesos se minimiza con respecto al
+gráfico con q=2. De hecho, el promedio de la cantidad de ciclos que toma en
+finalizar la tarea con q=21 es:  (108+120+145+164+176)/5.0 = 142.59999999999999
+En cambio, con q=2, el promedio es:  (135+140+152+169+180)/5.0 = 155.19999999999999
+
+OJO: corregir las cuentas de arriba al generar las imagenes! (aunque la
+conclusion deberia ser la misma: mejor con q=21)
+
+
+Es decir, un quantum mas grande parece optimizar el tiempo de ejecución.
 
 
 Rendimiento (throughput): maximizar el numero de procesos terminados por unidad
 de tiempo.
 
+En el gráfico se puede ver que para cualquier intervalo de tiempo, con q=21, el
+numero de procesos terminados por unidad de tiempo es siempre mayor o igual a el
+numero de procesos terminados por unidad de tiempo con q=2
 
+Es decir, un quantum mas grande parece maximizar el throughput.
 
 
 Liberacion de recursos: hacer que terminen cuanto antes los
