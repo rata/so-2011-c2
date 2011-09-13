@@ -1,0 +1,171 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Ejercicio 5
+\end_layout
+
+\begin_layout Standard
+Como sugirió la cátedra, se realizaron simplificaciones sobre el algoritmo
+ propuesto en el paper.
+ Se decidió implementar la idea general del algoritmo con la extensión de
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Compensation Tickets
+\begin_inset Quotes erd
+\end_inset
+
+ (previa autorización).
+ Se dejó de lado: 
+\begin_inset Quotes eld
+\end_inset
+
+Ticket Transfers
+\begin_inset Quotes erd
+\end_inset
+
+ porque es principalmente util para solucionar un problema que excede al
+ simulador que tenemos, 
+\begin_inset Quotes eld
+\end_inset
+
+Ticket Inflation
+\begin_inset Quotes erd
+\end_inset
+
+ porque 
+\begin_inset Quotes eld
+\end_inset
+
+it violates desirable modularity and load insulation properties
+\begin_inset Quotes erd
+\end_inset
+
+ y 
+\begin_inset Quotes eld
+\end_inset
+
+Ticket Currencies
+\begin_inset Quotes erd
+\end_inset
+
+ porque nos pareció demasiado complejo.
+\end_layout
+
+\begin_layout Subsection*
+Detalles de implementación
+\end_layout
+
+\begin_layout Standard
+Se utiliza una lista donde se tiene cada tarea y la cantidad de tickets
+ que tiene.
+ Inicialmente todas las tareas comienzan con un ticket.
+ Cada ticket representa un número, pero el número que representa depende
+ del lugar que ocupen en la lista.
+ Sea 
+\begin_inset Formula $k$
+\end_inset
+
+ la cantidad de tickets total de las tareas anteriores a la tarea 
+\begin_inset Formula $n$
+\end_inset
+
+, 
+\begin_inset Formula $k'$
+\end_inset
+
+ la cantidad de tickets de la tarea 
+\begin_inset Formula $n$
+\end_inset
+
+, entonces el rango de valores representados por los tickets de la tarea
+ 
+\begin_inset Formula $n$
+\end_inset
+
+ va desde hasta 
+\begin_inset Formula $k$
+\end_inset
+
+ hasta 
+\begin_inset Formula $k+k'$
+\end_inset
+
+.
+ Por ejemplo, si se tienen 2 tareas donde la primera tiene 5 tickets y la
+ segunda 2, el rango de valores representados por los tickets de la segunda
+ tarea es de 6-7 (ambos inclusive).
+\end_layout
+
+\begin_layout Standard
+Cuando se debe elegir el siguiente proceso a ejecutar lo que se hace es
+ generar un número random entre 1 y la cantidad total de tickets usados
+ por las tareas activas.
+ La tarea que tenga el ticket que representa al número random elegido será
+ la siguiente en ejecutar.
+ Es importante notar que si bien al cambiar el orden de la lista se cambia
+ los valores representados por los tickets de cada tarea, no se cambia la
+ probabilidad de que una tarea sea elegida.
+\end_layout
+
+\begin_layout Standard
+También se extendió usando la idea de 
+\begin_inset Quotes eld
+\end_inset
+
+Compensation Tickets
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Para esto lo que se hizo es que cuando una tarea utiliza menos de su quantum,
+ se le asignan más tickets.
+ Luego, la siguiente vez que se elija un proceso a ejecutar, ésta tendrá
+ mayor probabilidad de ser elegida.
+ Una vez que fue elegida para ejecutar, se le vuelve a la cantidad original
+ de tickets (salvo que de nuevo no utilice todo su quantum).
+\end_layout
+
+\end_body
+\end_document
