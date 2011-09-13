@@ -36,12 +36,58 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
 
 \begin_layout Section*
 Ejercicio 8
+\end_layout
+
+\begin_layout Standard
+Para poder observar la aleatoreidad del algoritmo del sorteo de los tickets
+ se realizaron varias ejecuciones para un mismo lote que contiene tareas
+ de consumo de CPU como también tareas Batch con el objetivo de mostrar
+ que no es determinante si las tareas se bloquean o no en relación a cuánto
+ quantum recibirá en un período de tiempo en promedio.
+ Éste lote contiene 5 tareas de CPU y 5 tareas Batch.
+ Todas ellas consumen 1000 ciclos de CPU mientras que la cantidad de bloqueos
+ son diferentes.
+ Ésto permite poder comparar las tareas y ver que el tiempo de finalización
+ de todas no es muy diferente por lo que la esperanza del quantum otorgado
+ a cada tarea en promedio tiende a estabilizarse.
+ Las ejecuciones se realizaron con distintas cantidad de quantum para observar
+ que ésto tampoco influye demasiado en la aleatoreidad (Siempre que el quantum
+ se pequeño en comparación a la cantidad de ciclos de CPU a ejecutar).
+\end_layout
+
+\begin_layout Standard
+La cantidad de bloqueos para cada tarea batch es la siguiente:
+\end_layout
+
+\begin_layout Standard
+Tarea 5: 5 bloqueos
+\end_layout
+
+\begin_layout Standard
+Tarea 6: 10 bloqueos
+\end_layout
+
+\begin_layout Standard
+Tarea 7: 15 bloqueos
+\end_layout
+
+\begin_layout Standard
+Tarea 8: 20 bloqueos 
+\end_layout
+
+\begin_layout Standard
+Tarea 9: 30 bloqueos
+\end_layout
+
+\begin_layout Standard
+Los resultados obtenidos fueron los siguientes:
 \end_layout
 
 \begin_layout Standard
@@ -144,6 +190,19 @@ quantum 50
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Dados los resultados, se puede ver que la distribución del tiempo que le
+ tomó a cada tarea realizar sus ejecuciones no depende de la cantidad de
+ bloqueos ni del orden en el que fueron cargadas sino que se dió en forma
+ aleatoria y el tiempo tomado por cada tarea varía en cada una de las ejecucione
+s, haciendo que tareas que pueden ser beneficiadas por el otorgamiento del
+ quantum en algunas ejecuciones terminen siendo perjudicadas en otras.
+ También es posible observar que la varianza del tiempo de finalización
+ de las tareas no es demasiado grande en relación a los ciclos requeridos
+ cada una de ellas, lo que muestra que la distribución del quantum otorgado
+ es bastante equitativa.
 \end_layout
 
 \end_body
