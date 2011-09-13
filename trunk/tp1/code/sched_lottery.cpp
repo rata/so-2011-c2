@@ -2,6 +2,7 @@
 #include "basesched.h"
 #include <stdio.h>
 #include <errno.h>
+#include <math.h>
 #include <algorithm>
 #include <iostream> //debug
 using namespace std;
