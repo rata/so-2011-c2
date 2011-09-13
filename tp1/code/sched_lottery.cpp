@@ -123,4 +123,8 @@ int SchedLottery::tick(const enum Motivo m) {
 	}
 	cout << "ERROR" << "ganador: " << ticket_ganador << endl << "total Tickets" << tot_tickets << endl;
 
+	// Hasta aca nunca deberia llegar
+	// Por algun motivo silencia el warning "control reaches end of non-void
+	// function" poner el abort()
+	abort();
 }
