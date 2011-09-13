@@ -262,7 +262,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename /home/rodrigo/public_html/facu/so/so-2011-c2/tp1/code/ej7-gr1-q2.png
-	width 16cm
+	width 14cm
 
 \end_inset
 
@@ -295,12 +295,12 @@ Con quantum 2
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../code/ej7-gr1-q21.png
-	width 16cm
+	width 14cm
 
 \end_inset
 
