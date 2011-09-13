@@ -36,45 +36,42 @@
 \tracking_changes false
 \output_changes false
 \author "" 
-\author "" 
 \end_header
 
 \begin_body
 
-\begin_layout Title
-Sistemas Operativos
-\begin_inset Newline newline
-\end_inset
-
-Trabajo Práctico I
-\end_layout
-
-\begin_layout Author
-Federico Huel (329/07)
-\begin_inset Newline newline
-\end_inset
-
-Juán Manuel Lomonaco (603/07)
-\begin_inset Newline newline
-\end_inset
-
-Rodrigo Campos (561/06)
+\begin_layout Section*
+Ejercicio 8
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "ej2.lyx"
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej8-gr2-q10.png
+	width 14cm
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "ej4.lyx"
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+quantum 10
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -82,9 +79,33 @@ filename "ej4.lyx"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "ej5.lyx"
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej8-gr3-q20.png
+	width 14cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+quantum 20
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -92,19 +113,33 @@ filename "ej5.lyx"
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "ej7.lyx"
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej8-gr4-q50.png
+	width 14cm
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand include
-filename "ej8.lyx"
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+quantum 50
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
