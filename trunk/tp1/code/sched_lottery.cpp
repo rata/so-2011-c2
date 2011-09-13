@@ -65,7 +65,7 @@ int SchedLottery::tick(const enum Motivo m) {
 		//Si no le doy como recompenza la fracción de tiempo que usó.
 		int tickets_recompenza = 1;
 		if(ciclos_usados > 0) {
-			tickets_recompenza = quantum / ciclos_usados;
+			tickets_recompenza = ceil((quantum * 1.0)/ciclos_usados);
 		}
 		//sleep(1);
 
