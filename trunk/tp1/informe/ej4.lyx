@@ -59,12 +59,12 @@ Para mostrar que el comportamiento es el esperado se hicieron varias pruebas.
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../code/ej4-gr1.png
-	width 16cm
+	width 14cm
 
 \end_inset
 
@@ -100,12 +100,12 @@ se la tarea se consume un ciclo.
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../code/ej4-gr2.png
-	width 16cm
+	width 14cm
 
 \end_inset
 
@@ -140,7 +140,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../code/ej4-gr3.png
-	width 16cm
+	width 14cm
 
 \end_inset
 
@@ -168,12 +168,12 @@ La cuarta prueba es similar a la anterior, pero se probó con 2 tareas y
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../code/ej4-gr4.png
-	width 16cm
+	width 14cm
 
 \end_inset
 

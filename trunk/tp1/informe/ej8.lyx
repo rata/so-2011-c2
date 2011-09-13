@@ -199,10 +199,16 @@ Dados los resultados, se puede ver que la distribución del tiempo que le
  aleatoria y el tiempo tomado por cada tarea varía en cada una de las ejecucione
 s, haciendo que tareas que pueden ser beneficiadas por el otorgamiento del
  quantum en algunas ejecuciones terminen siendo perjudicadas en otras.
- También es posible observar que la varianza del tiempo de finalización
- de las tareas no es demasiado grande en relación a los ciclos requeridos
- cada una de ellas, lo que muestra que la distribución del quantum otorgado
- es bastante equitativa.
+ Como no hay demasiada diferencia entre el tiempo requerido para que cada
+ tarea termine se puede deducir que la esperanza es 
+\begin_inset Formula $1/cantidadDeTareasPuestasEnEjecución$
+\end_inset
+
+, ya que ésta puede estimarse usando el promedio.
+ Al ser reducido el rango de tiempos de finalización de las diferentes tareas
+ también se puede deducir que la varianza de la distribución es pequeña
+ y ésto es otra muestra del grade de aleatoreidad del algoritmo al lograr
+ una distribución del quantum bastante equitativa.
 \end_layout
 
 \end_body
