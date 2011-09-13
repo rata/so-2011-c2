@@ -51,6 +51,58 @@ A continuación se justifica para cada una de las medidas, la mejor elección
 \end_layout
 
 \begin_layout Standard
+Como lote de tareas se usó:
+\begin_inset Formula \[
+TaskBatch\,20\,8\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+TaskBatch\,20\,13\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+TaskBatch\,20\,9\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+TaskBatch\,20\,17\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+TaskBatch\,20\,19\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Es decir, todas usan 20 ciclos como tiempo de CPU y la cantidad de llamadas
+ bloqueantes que realizan fueron elegidas random entre números de 0 a 19
+ (ambos inclusive)
+\end_layout
+
+\begin_layout Standard
 
 \series bold
 Ecuanimidad (fairness)
@@ -60,10 +112,10 @@ Ecuanimidad (fairness)
 \end_layout
 
 \begin_layout Standard
-Todos los procesos reciben una dosis justa, si por justa se entiende que
- todos reciben el mismo quantum.
- Esto no tiene que ver con algun valor de quantum, sino que es consecuencia
- de ser un scheduler Round Robin
+Si por justa se entiende que todos reciben el mismo quantum, todos los procesos
+ reciben una dosis justa.
+ Esto no tiene que ver con algun valor de quantum usado, sino que es consecuenci
+a de ser un scheduler Round Robin.
 \end_layout
 
 \begin_layout Standard
@@ -76,8 +128,8 @@ Eficiencia
 
 \begin_layout Standard
 No importa el valor de quantum elegido, el scheduler siempre trata de que
- esté ocupado el CPU.
- Si un proceso de bloquea, entonces comienza a ejecturar otro.
+ esté ocupado todo el tiempo la CPU.
+ Si un proceso se bloquea, entonces comienza a ejecturar otro.
  Solo se ejecutará el proceso 
 \begin_inset Quotes eld
 \end_inset
@@ -96,22 +148,7 @@ idle
 \end_inset
 
  ni bien otro proceso esté en estado listo.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Carga del sistema
-\series default
-: minimizar la cant.
- de procesos listos que estan esperando CPU.
-\end_layout
-
-\begin_layout Standard
-...
- No se me ocurrio nada razonable...
- No estoy seguro si entiendo lo que es bien tampoco...
- :S
+ Luego, trata de que el CPU esté ocupado todo el tiempo.
 \end_layout
 
 \begin_layout Standard
@@ -125,7 +162,7 @@ Tiempo de respuesta
 \begin_layout Standard
 Valores pequeños del quantum parecen mejorar esta medida ya que están menos
  tiempo desde que están en estado listo hasta que vuelven a ejecutar.
- Luego, el tiempo de respuesta percibido por el usuario es menor.
+ Entonces, el tiempo de respuesta percibido por el usuario es menor.
 \end_layout
 
 \begin_layout Standard
@@ -147,7 +184,7 @@ No pudimos ver luego de cuantos ciclos un proceso comienza a dar resultados.
 \begin_inset Formula $n$
 \end_inset
 
- la cantidad de procesos, en peor caso el tiempo que tardara una tarea en
+ la cantidad de procesos, en peor caso el tiempo que tardará una tarea en
  ejecutarse es 
 \begin_inset Formula $q\times(n-1)$
 \end_inset
@@ -181,7 +218,7 @@ Supongamos entonces que la tarea tarda
 \begin_inset Formula $m$
 \end_inset
 
- ciclos requiere ejecutarse una cantidad 
+ ciclos, y comenzar a dar resultados, requiere ejecutarse una cantidad 
 \begin_inset Formula $k$
 \end_inset
 
@@ -207,15 +244,92 @@ Es decir, en el peor caso y con
 
 , es independiente del quantum la demora que tenga un proceso en empezar
  a dar resultados (si el quantum es menor o igual a la cantidad de ciclos
- que requiere el proceso en empezar a dar resultados) 
+ que requiere el proceso en empezar a dar resultados)
 \end_layout
 
 \begin_layout Standard
-(Graficos con q=21 y q=2!)
+Para analizar el tiempo de ejecución y el rendimiento, se tendrán en cuenta
+ los siguientes gráficos:
 \end_layout
 
 \begin_layout Standard
-El ciclo en el que termina el primer proceso al cabo de varias corridas
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename /home/rodrigo/public_html/facu/so/so-2011-c2/tp1/code/ej7-gr1-q2.png
+	width 16cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Con quantum 2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename ../code/ej7-gr1-q21.png
+	width 16cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Con quantum 21
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+El ciclo en el que termina el primer proceso, al cabo de varias corridas,
  parece ser bastante estable.
  Es decir, no se ve muy afectado por el random de cuándo son la tareas de
  IO.
@@ -240,22 +354,38 @@ Tiempo de ejecucion
 Con quantum 21 (mayor al tiempo de CPU usado por todas las tareas) se puede
  ver que la distribución de en qué ciclo terminan los procesos se minimiza
  con respecto al gráfico con quantum 2.
+ Es decir, el primer proceso en terminar ocupa menos ciclos usando quantum
+ 21 que quantum 2.
+ Y lo mismo pasa para el resto de los procesos: el segundo proceso en terminar
+ demora menos ciclos cuando corre con quantum 21, etc.
  De hecho, el promedio de la cantidad de ciclos que toma en finalizar la
  tarea con quantum 21 es: 
-\begin_inset Formula $(108+120+145+164+176)/5.0=142.59999999999999$
+\begin_inset Formula $(106+122+147+165+175)/5=143$
 \end_inset
 
 .
  En cambio, con quantum 2, el promedio es: 
-\begin_inset Formula $(135+140+152+169+180)/5.0=155.19999999999999$
+\begin_inset Formula $(140+152+165+175+185)/5=163.4$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-OJO: corregir las cuentas de arriba al generar las imagenes! (aunque la
- conclusion deberia ser la misma: mejor con q=21)
+También, parece razonable, ya que al usar un quantum más pequeño se interrumpe
+ a un proceso antes de bloquearse.
+ Y si bien es verdad que con un quantum mas pequeño la demora en volver
+ a ejecutarse es menor, el tiempo que ejecuta también es menor y esto parece
+ ser dominante y demora el tiempo que tarda un proceso en ejecutarse completamen
+te.
+ Además, al modificar el quantum se está cambiando también la relación 
+\begin_inset Formula $\frac{contextSwitch}{quantum}$
+\end_inset
+
+.
+ Es decir, con un quantum mas grande, el tiempo usado en cambios de contexto
+ es menor, por lo que hay más tiempo de CPU usado para ejecutar las tareas
+ propiamente dichas.
 \end_layout
 
 \begin_layout Standard
@@ -274,7 +404,8 @@ Rendimiento (throughput)
 En el gráfico se puede ver que para cualquier intervalo de tiempo, con quantum
  21, el numero de procesos terminados por unidad de tiempo es siempre mayor
  o igual a el numero de procesos terminados por unidad de tiempo con quantum
- 2
+ 2.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -292,8 +423,7 @@ Liberacion de recursos
 
 \begin_layout Standard
 No importa el quantum, esta medida se ignora totalmente.
- El scheduler no tiene ninguna nocion de los recursos usados por una tarea
- 
+ El scheduler no tiene ninguna noción de los recursos usados por una tarea.
 \end_layout
 
 \end_body

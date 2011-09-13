@@ -46,12 +46,12 @@ Ejercico 4
 \end_layout
 
 \begin_layout Standard
-Para mostrar que el comportamiento es el esperado se hicieron algunas pruebas.
+Para mostrar que el comportamiento es el esperado se hicieron varias pruebas.
  La primera consiste de dos tareas que usan 10 ciclos cada una de CPU.
  El quantum usado es 5, por lo que se ve que cambian a los 5 ciclos.
  En total se usa un ciclo mas (11 ciclos) porque, según pudimos debugguear
  el simulador, un ciclo se usa al cargar la tarea por primera vez (y aunque
- esta tarea no se esta ejecutando se le atribuye el tiempo de CPU)
+ esta tarea no se esta ejecutando, se le atribuye el tiempo de CPU)
 \end_layout
 
 \begin_layout Standard
@@ -77,8 +77,9 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-La segunda consiste también en dos tareas, pero en este caso cada un hace:
- 5 ciclos de CPU y luego 2 ciclos IO.
+La segunda consiste también en dos tareas, pero en este caso cada un tiene
+ el siguiente patrón de consumo de recursos: 5 ciclos de CPU y luego 2 ciclos
+ IO.
  Y como quantum se usó 5 ciclos también.
 \end_layout
 
@@ -86,11 +87,11 @@ La segunda consiste también en dos tareas, pero en este caso cada un hace:
 El primer ciclo de ambas tareas no es ocupado por la tarea en sí, sino que
  es necesario al cargar la tarea por primera vez.
  Luego hace los 5 ciclos de CPU, interrumpidos porque se excede el quantum
- y switchea a la otra tarea, y luego se bloquea 2 ciclos.
- Desspués de desbloquearse se utiliza un ciclo de CPU más porque al desbloquears
-e la tarea se consume un ciclo.
+ y cambia a la otra tarea, y luego se bloquea 2 ciclos.
+ Desspués de desbloquearse se utiliza un ciclo de CPU más, porque al desbloquear
+se la tarea se consume un ciclo.
  Es importante notar que cuando ambas tareas estan bloqueadas se ejecuta
- la tarea idle y ni bien se desbloquea una se la ejecuta.
+ la tarea idle y ni bien se desbloquea una tarea se la ejecuta.
  
 \end_layout
 
@@ -134,7 +135,7 @@ borde
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -152,9 +153,14 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-La cuarta prueba es similar a la anterior, pero se probó que se le renueve
- el quantum si la otra tarea sigue bloqueada, como muestra el gráfico a
- continuación:
+Se utilizó un quantum de 10 y como se puede ver en el gráfico, efectivamente
+ se renueva como es esperado.
+\end_layout
+
+\begin_layout Standard
+La cuarta prueba es similar a la anterior, pero se probó con 2 tareas y
+ que se renueve el quantum si la otra tarea está bloqueada.
+ Y efectivamente esto es lo que ocurrió como muestra el gráfico a continuación:
 \end_layout
 
 \begin_layout Standard
@@ -162,7 +168,7 @@ La cuarta prueba es similar a la anterior, pero se probó que se le renueve
 placement H
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -174,13 +180,13 @@ status open
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Entonces, el comportamiento en todas las pruebas fue el esperado.
 \end_layout
 
 \end_body
