@@ -18,6 +18,8 @@ int main()
 	pthread_t t3;
 	pthread_t t4;
 	pthread_t t5;
+	pthread_t t6;
+	pthread_t t7;
 
 	pthread_create(&t1, NULL, rlock, NULL);
 	pthread_create(&t2, NULL, rlock, NULL);
@@ -27,6 +29,10 @@ int main()
 	sleep(1);
 	pthread_create(&t4, NULL, rlock, NULL);
 	pthread_create(&t5, NULL, rlock, NULL);
+	sleep(1);
+	pthread_create(&t6, NULL, wlock, NULL);
+	sleep(1);
+	pthread_create(&t7, NULL, rlock, NULL);
 
 
 	pthread_join(t1, NULL);
@@ -34,6 +40,8 @@ int main()
 	pthread_join(t3, NULL);
 	pthread_join(t4, NULL);
 	pthread_join(t5, NULL);
+	pthread_join(t6, NULL);
+	pthread_join(t7, NULL);
 
 	return 0;
 }
