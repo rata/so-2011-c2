@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -g -Wall -Werror
-LDFLAGS = -pthread
+LDFLAGS = -lpthread
 
 BINARIES = backend
 
@@ -11,6 +11,9 @@ backend: Backend_mono.cpp Backend_mono.h Enviar_recibir.o Enviar_recibir.h Encab
 
 Enviar_recibir.o: Enviar_recibir.cpp Enviar_recibir.h Encabezado.h
 	$(CC) $(CFLAGS) -c Enviar_recibir.cpp
+
+test-rwlock: RWLock.o test-rwlock.o
+	$(CXX) $(LDFLAGS) $(CFLAGS) $^ -o test-rwlock
 
 clean:
 	rm -f *.o

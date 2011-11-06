@@ -1,6 +1,9 @@
 #include "RWLock.h"
 #include <assert.h>
 
+// Debug
+#include <iostream>
+
 
 using namespace std;
 
@@ -62,6 +65,11 @@ void RWLock :: wlock()
 	// Si ya se esta usando la cola o si hay algun lector, el wlock se debe
 	// encolar
 	if (q_in_use || readers > 0) {
+
+		// Cualquier pedido que llegue mientras hacemos el wait, debe
+		// encolarse (para evitar inanicion). Asique marcamos la cola
+		// como en uso antes de hacer el wait
+		q_in_use = true;
 		sem_t *sem = init_q_sem();
 		encolar_writer(sem);
 		pthread_mutex_unlock(&q_lock);
