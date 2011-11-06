@@ -13,7 +13,7 @@ Enviar_recibir.o: Enviar_recibir.cpp Enviar_recibir.h Encabezado.h
 	$(CC) $(CFLAGS) -c Enviar_recibir.cpp
 
 test-rwlock: RWLock.o test-rwlock.o
-	$(CXX) $(LDFLAGS) $(CFLAGS) $^ -o test-rwlock
+	$(CXX) $(LDFLAGS) $(CFLAGS) $^ -o $@
 
 clean:
 	rm -f *.o
