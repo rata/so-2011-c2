@@ -187,12 +187,15 @@ void *atendedor_de_jugador(void *arg) {
 			lock_tablero_palabras.wlock();
 
 			// las letras acumuladas conforman una palabra completa, escribirlas en el tablero de palabras y borrar las letras temporales
-			for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++) {
-				//write lock a la casilla que voy a escribir en el tablero de palabras
+			for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++)
 				locks_casillas_palabras[casillero->fila][casillero->columna].wlock();
+
+			for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++)
 				tablero_palabras[casillero->fila][casillero->columna] = casillero->letra;
+
+			for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++)
 				locks_casillas_palabras[casillero->fila][casillero->columna].wunlock();
-			}
+
 			palabra_actual.clear();
 
 			if (enviar_ok(socket_fd) != 0) {
@@ -351,11 +354,15 @@ void terminar_servidor_de_jugador(int socket_fd, list<Casillero>& palabra_actual
 
 
 void quitar_letras(list<Casillero>& palabra_actual) {
-	for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++) {
+	for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++)
 		locks_casillas_letras[casillero->fila][casillero->columna].wlock();
+
+	for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++)
 		tablero_letras[casillero->fila][casillero->columna] = VACIO;
+
+	for (list<Casillero>::const_iterator casillero = palabra_actual.begin(); casillero != palabra_actual.end(); casillero++)
 		locks_casillas_letras[casillero->fila][casillero->columna].wunlock();
-	}
+
 	palabra_actual.clear();
 }
 
