@@ -90,8 +90,8 @@ int main(int argc, const char* argv[]) {
 	}
 
 	// aceptar conexiones entrantes.
-	socket_size = sizeof(remoto);
 	while (true) {
+		socket_size = sizeof(remoto);
 		if ((socketfd_cliente = accept(socket_servidor, (struct sockaddr*) &remoto, (socklen_t*) &socket_size)) == -1)
 			cerr << "Error al aceptar conexion" << endl;
 		else {
