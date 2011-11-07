@@ -1,0 +1,416 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Servidor de backend multi-thread
+\end_layout
+
+\begin_layout Standard
+Para que el backend sea multi-thread se realizaron varios cambios.
+ En primer lugar se modificó el backlog del listen para que se encolen más
+ conexiones.
+ En segundo lugar, en vez de llamar a 
+\begin_inset Quotes eld
+\end_inset
+
+atender_jugador
+\begin_inset Quotes erd
+\end_inset
+
+ cuando se crea una nueva conexión, se lanza un thread que maneja esta conexión
+ y se sigue esperando por nuevas conexiones.
+ Y en tercer lugar se protegieron las estructuras en memoria que se pueden
+ acceder potencialmente desde varios threads con RWLocks.
+\end_layout
+
+\begin_layout Standard
+El primer cambio fue bastante simple, en lugar de llamar a listen() con
+ 1 como parámetro, se le pasa 10.
+ Este valor fue elegido sin mayor motivo previa autorización de la cátedra
+ para elegirlo.
+\end_layout
+
+\begin_layout Standard
+El segundo cambio implica más cambios en el código.
+ El código del servidor original era de esta forma:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+        socket_size = sizeof(remoto);
+\end_layout
+
+\begin_layout Plain Layout
+
+        while (true) {
+\end_layout
+
+\begin_layout Plain Layout
+
+          if ((fd_cliente = accept(socket_srv, &remoto, &socket_size)) ==
+ -1)
+\end_layout
+
+\begin_layout Plain Layout
+
+               cerr << "Error al aceptar conexion" << endl;
+\end_layout
+
+\begin_layout Plain Layout
+
+          else {
+\end_layout
+
+\begin_layout Plain Layout
+
+               close(socket_srv);
+\end_layout
+
+\begin_layout Plain Layout
+
+               atendedor_de_jugador(fd_cliente);
+\end_layout
+
+\begin_layout Plain Layout
+
+          }
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+El primer cambio que se hizo fue poner la asignacion de socket_size dentro
+ del while (en la primera línea), para asegurar que se llame a 
+\begin_inset Quotes eld
+\end_inset
+
+accept
+\begin_inset Quotes erd
+\end_inset
+
+ siempre con el tamaño correcto.
+ También se sacó el close sobre el socket del sevidor, ya que se queire
+ seguir escuchando nuevas conexiones en este socket.
+ Y en vez de llamar a 
+\begin_inset Quotes eld
+\end_inset
+
+atendedor_de_jugador
+\begin_inset Quotes erd
+\end_inset
+
+ se crea un thread que llama a esta función.
+ Para lograr esto fueron necesarios varios cambios:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+  while (true) {
+\end_layout
+
+\begin_layout Plain Layout
+
+     socket_size = sizeof(remoto);
+\end_layout
+
+\begin_layout Plain Layout
+
+     if ((fd_cliente = accept(socket_srv, &remoto, &socket_size)) == -1)
+\end_layout
+
+\begin_layout Plain Layout
+
+       cerr << "Error al aceptar conexion" << endl;
+\end_layout
+
+\begin_layout Plain Layout
+
+     else {
+\end_layout
+
+\begin_layout Plain Layout
+
+        // XXX: hago el malloc aca para pasarle al thread y el
+\end_layout
+
+\begin_layout Plain Layout
+
+        // thread lo libera (feo)
+\end_layout
+
+\begin_layout Plain Layout
+
+        int *ptr_fd_cliente = (int *) malloc(sizeof(int));
+\end_layout
+
+\begin_layout Plain Layout
+
+        *ptr_fd_cliente = fd_cliente;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        // Creo un thread para antender a este jugador
+\end_layout
+
+\begin_layout Plain Layout
+
+        // Lo hago detached asi me olvido del join
+\end_layout
+
+\begin_layout Plain Layout
+
+        pthread_t t;
+\end_layout
+
+\begin_layout Plain Layout
+
+        pthread_create(&t, NULL, atendedor_de_jugador, ptr_fd_cliente);
+\end_layout
+
+\begin_layout Plain Layout
+
+        pthread_detach(t);
+\end_layout
+
+\begin_layout Plain Layout
+
+     }
+\end_layout
+
+\begin_layout Plain Layout
+
+ } 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Para simplificar el pseudocódigo se quitó el checkeo de códigos de retorno
+ de las funciones, aunque en la implementación se utilizó 
+\begin_inset Quotes eld
+\end_inset
+
+assert
+\begin_inset Quotes erd
+\end_inset
+
+ para asegurarse que no haya ningún error.
+ Como se puede ver, se reserva memoria dinámicamente donde se pone el file
+ descriptor que manejará el thread.
+ Este puntero de memoria dinámica se le pasa al thread, quien lo libera
+ una vez que lee el valor.
+ Para poder usar como 
+\begin_inset Quotes eld
+\end_inset
+
+start_routine
+\begin_inset Quotes erd
+\end_inset
+
+ la función 
+\begin_inset Quotes eld
+\end_inset
+
+atendedor_de_jugador
+\begin_inset Quotes erd
+\end_inset
+
+ se modificó levemente su firma, para que devuelva 
+\begin_inset Quotes eld
+\end_inset
+
+void *
+\begin_inset Quotes erd
+\end_inset
+
+ y tome 
+\begin_inset Quotes eld
+\end_inset
+
+void *
+\begin_inset Quotes erd
+\end_inset
+
+ como parámetro.
+ Entonces, la funcion devuelve 
+\begin_inset Quotes eld
+\end_inset
+
+NULL
+\begin_inset Quotes erd
+\end_inset
+
+ ahora.
+\end_layout
+
+\begin_layout Standard
+De esta forma se logra aceptar varias conexiones concurrentemente y manejarlas
+ en distintos threads.
+ Solo falta proteger las estructuras en memoria que pueden ser accedidas
+ desde distintos threads.
+\end_layout
+
+\begin_layout Subsection*
+Protección de los tableros con RWLocks
+\end_layout
+
+\begin_layout Standard
+Se decidió usar un RWLock por cada casilla de cada tablero y cada operación
+ que opere con un conjunto K de casilleros deberá pedir primero el lock
+ (de read o write según corresponda) para todo el conjunto y luego operar
+ sobre los casilleros.
+ Para pedir los locks de un conjunto K de casilleros se debe seguir un orden
+ en particular: primero los locks de las filas numéricamente más bajas,
+ y dentro de una misma fila, primero los locks de las columnas numéricamente
+ más bajas.
+ Es importante notar que cada operación pedirá locks solo de read o de write
+ sobre todo el conjunto K, ninguna operación pedirá locks de read sobre
+ un subconjunto de K y locks de write sobre otro subconjunto de K.
+\end_layout
+
+\begin_layout Standard
+De esta forma, es fácil ver que se pueden poner letras en casilleros distintos,
+ ya que se tomará el write de lock de casilleros distintos y esto se puede
+ hacer de forma simultánea.
+ También se podrá consultar el estado del tablero en forma simultánea, ya
+ que habrán dos (o más) threads que piden locks de read sobre todas las
+ casillas y esto se puede hacer de forma simultánea.
+\end_layout
+
+\begin_layout Standard
+Sin embargo, no resulta tan evidente por qué no se puede mandar un estado
+ inconsistente del tablero (por ejemplo, si está escrita la palabra 
+\begin_inset Quotes eld
+\end_inset
+
+león
+\begin_inset Quotes erd
+\end_inset
+
+ y se le responde al front-end 
+\begin_inset Quotes eld
+\end_inset
+
+eón
+\begin_inset Quotes erd
+\end_inset
+
+).
+ Esto es porque se toma el read lock sobre todas las casillas y luego se
+ las lee.
+ Cuando se tiene el read lock sobre todas las casillas, ninguna puede estar
+ siendo escrita, por lo que se tiene un estado consistente del tablero.
+ Y al realizar los write de la misma forma, pidiendo los write lock sobre
+ todas las casillas primero, se asegura que nadie está leyendo esas casillas
+ y se actualizan todas de forma 
+\begin_inset Quotes eld
+\end_inset
+
+atómica
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Y resulta menos evidente aún por qué no puede haber deadlock con esta solución.
+ Pero esto se debe a que se fuerza un orden para pedir los recursos, evitando
+ así que haya espera circular.
+ Es decir, el argumento es el mismo que para el ejercicio 3 del primer parcial.
+ Cada recurso sería una casilla y se pueden numerar las casillas de 1 a
+ 
+\begin_inset Formula $n\times m$
+\end_inset
+
+ y forzando que se pidan en orden ascendente.
+ De esta forma, se tiene un ejemplo idéntico al ejercicio del primer parcial,
+ por lo cual no puede haber deadlock.
+\end_layout
+
+\end_body
+\end_document
