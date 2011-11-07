@@ -1,0 +1,621 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Read-Write Lock
+\end_layout
+
+\begin_layout Standard
+Los read-write lock que tienen prioridad para readers o writers tienen inanición.
+ Si los readers tienen prioridad, entonces puede que un writer nunca adquiera
+ el lock, ya que puede que siempre un reader nuevo adquiera el lock (pues
+ tiene prioridad sobre el writer), teniendo inanición para los writers.
+ Si el lock tiene prioridad para los writers, entonces análogamente tiene
+ inanición para los readers.
+\end_layout
+
+\begin_layout Standard
+Para implementar un read-write lock libre de inanición se usó como idea
+ general respetar el orden en que se pide el lock, teniendo en cuenta pueden
+ haber varios lectores simultáneamente.
+ De esta forma, ni writers ni readers tienen prioridad y se garantiza que
+ no haya inanición: en peor caso cada uno obtendrá el lock cuando todos
+ los que lo pidieron antes lo hayan liberado.
+\end_layout
+
+\begin_layout Standard
+Para esto se usaron unas estructuras protegidas por un mutex: una varible
+ booleana 
+\begin_inset Quotes eld
+\end_inset
+
+q_in_use
+\begin_inset Quotes erd
+\end_inset
+
+, una entera 
+\begin_inset Quotes eld
+\end_inset
+
+readers
+\begin_inset Quotes erd
+\end_inset
+
+ y una cola 
+\begin_inset Quotes eld
+\end_inset
+
+q
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+q_in_use
+\begin_inset Quotes erd
+\end_inset
+
+ indica si se debe usar la cola 
+\begin_inset Quotes eld
+\end_inset
+
+q
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+readers
+\begin_inset Quotes erd
+\end_inset
+
+ indica la cantidad de lectores que tienen el read-write lock y 
+\begin_inset Quotes eld
+\end_inset
+
+q
+\begin_inset Quotes erd
+\end_inset
+
+ es una cola donde se encolaran los pedidos de read/write.
+\end_layout
+
+\begin_layout Standard
+Los pedidos del lock se encolarán en la cola 
+\begin_inset Quotes eld
+\end_inset
+
+si corresponde
+\begin_inset Quotes erd
+\end_inset
+
+ (se explicará detalladamente más adelante cuándo corresponde) y si quien
+ pide el lock es encolado, espera hasta ser desencolado.
+ Para lograr esta espera, 
+\begin_inset Quotes eld
+\end_inset
+
+q
+\begin_inset Quotes erd
+\end_inset
+
+ es una cola de tuplas 
+\begin_inset Formula $(semaforo,\, reader/writer)$
+\end_inset
+
+ y quien espera a ser desencolado hace un wait() en el semáforo (que se
+ inicializa con valor 0).
+ Luego, cuando es desencolado se le hace un signal() y así 
+\begin_inset Quotes eld
+\end_inset
+
+se despierta
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Se explicará en el 
+\begin_inset Quotes eld
+\end_inset
+
+rlock()
+\begin_inset Quotes erd
+\end_inset
+
+ el motivo por el cual la cola contiene la información de si quien está
+ esperando el lock es un reader o un writer.
+\end_layout
+
+\begin_layout Standard
+A modo de simplificación se puede pensar que cada vez que una llamada (rlock
+ o wlock) deba bloquearse, en esta implementación lo que hace es encolarla
+ para garantizar el orden en que se desbloquean.
+ De esta forma, es fácil ver que si un writer tiene el lock, todos los pedidos
+ posteriores para obtener el lock (tanto rlock como wlock) deben encolarse.
+ También, si al menos un reader tiene el lock, el pedido de wlock() debe
+ encolarse.
+ De esta forma, un pseudocodigo del wlock sería:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+wlock():
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    lock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Si ya se esta usando la cola o si hay algun lector, el wlock se
+\end_layout
+
+\begin_layout Plain Layout
+
+    // debe encolar
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (q_in_use || readers > 0) {
+\end_layout
+
+\begin_layout Plain Layout
+
+                // Cualquier pedido que llegue mientras hacemos el wait,
+ debe
+\end_layout
+
+\begin_layout Plain Layout
+
+                // encolarse (para evitar inanicion).
+ Asique marcamos la cola
+\end_layout
+
+\begin_layout Plain Layout
+
+                // como en uso antes de hacer el wait
+\end_layout
+
+\begin_layout Plain Layout
+
+                q_in_use = true
+\end_layout
+
+\begin_layout Plain Layout
+
+                sem = encolar_writer()
+\end_layout
+
+\begin_layout Plain Layout
+
+                unlock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+                sem_wait(sem)
+\end_layout
+
+\begin_layout Plain Layout
+
+                lock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+                // Me saco a mi de la cola, yo soy el tope por invariante
+\end_layout
+
+\begin_layout Plain Layout
+
+                desencolar_tope()
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+        // Cuando un writer tiene el lock, todo lo que venga se debe encolar.
+\end_layout
+
+\begin_layout Plain Layout
+
+        // Por lo que la cola esta en uso
+\end_layout
+
+\begin_layout Plain Layout
+
+        q_in_use = true
+\end_layout
+
+\begin_layout Plain Layout
+
+        unlock(q_lock)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+De esta forma, un wlock() solo se encola si 
+\begin_inset Quotes eld
+\end_inset
+
+hay que encolarlo
+\begin_inset Quotes erd
+\end_inset
+
+ (es decir la cola ya está en uso) o si se lo intenta hacer mientras hay
+ algún reader (readers > 0).
+ En caso de que se lo encole, espera a que se lo 
+\begin_inset Quotes eld
+\end_inset
+
+despierte
+\begin_inset Quotes erd
+\end_inset
+
+ en el semáforo, se saca de la cola y obtiene el lock.
+\end_layout
+
+\begin_layout Standard
+Cuando un escritor libera el lock, se debe desactivar el uso de la cola
+ solo si ésta queda vacía.
+ Sino, se debe desencolar al próximo en la cola.
+ Es decir, en pseudocodigo el wunlock sería así:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+wunlock():
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+       lock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+       if (q.empty())
+\end_layout
+
+\begin_layout Plain Layout
+
+                q_in_use = false
+\end_layout
+
+\begin_layout Plain Layout
+
+        else
+\end_layout
+
+\begin_layout Plain Layout
+
+                despertar_prox()
+\end_layout
+
+\begin_layout Plain Layout
+
+        unlock(q_lock)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Como no se puede tener otro lock en simultáneo con un wlock (ni rlock ni
+ wlock), al liberar este lock es necesario despertar al próximo que esté
+ esperando el lock.
+ Y si la cola queda vacía al liberar este lock, ésta se deja de usar ya
+ que solo se usa cuando es necesario (y no sería necesario encolar los pedidos
+ de lock si vinieran varios read locks, por ejemplo).
+\end_layout
+
+\begin_layout Standard
+Una sutileza que vale la pena destacar es que si se libera un lock de escritura,
+ y en la cola solo habian pedidos de lectura, éstos deberan suceder en simultáne
+o (sino se pierde la semántica de un read-write lock).
+ Sin embargo, wunlock() solo 
+\begin_inset Quotes eld
+\end_inset
+
+despierta
+\begin_inset Quotes erd
+\end_inset
+
+ al primero de la cola.
+ El efecto de tener varios readers en simultáneo se hace 
+\begin_inset Quotes eld
+\end_inset
+
+en cascada
+\begin_inset Quotes erd
+\end_inset
+
+, ya que este reader que wunlock() despertó despertará al próximo si y solo
+ si es un reader.
+ Y para lograr este efecto en cascada es que en la cola se guarda si es
+ está esperando para un obtener un read-lock o para obtener un write-lock.
+ Luego, teniendo en cuenta esto, el rlock() deberá despertar al siguiente
+ si es un reader, incrementar la cantidad de readers cuand obtenga el lock
+ y si la cola queda vacía se puede marcar como que no está en uso.
+ Entonces, un pseudocódigo de rlock sería:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+rlock():
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+       lock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        // Si esta en uso la cola, encolamos el read
+\end_layout
+
+\begin_layout Plain Layout
+
+        if (q_in_use) {
+\end_layout
+
+\begin_layout Plain Layout
+
+                sem = encolar_reader()
+\end_layout
+
+\begin_layout Plain Layout
+
+                unlock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+                sem_wait(sem)
+\end_layout
+
+\begin_layout Plain Layout
+
+                // Es nuestro turno, me saco de la cola y me fijo si queda
+\end_layout
+
+\begin_layout Plain Layout
+
+                // vacia.
+ Si queda vacia, no se usa mas la cola.
+ Y si no esta
+\end_layout
+
+\begin_layout Plain Layout
+
+                // vacia, y el que viene es un reader, lo despierto tambien
+\end_layout
+
+\begin_layout Plain Layout
+
+                lock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+                desencolar_tope()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+                if (q.empty())
+\end_layout
+
+\begin_layout Plain Layout
+
+                        q_in_use = false
+\end_layout
+
+\begin_layout Plain Layout
+
+                else
+\end_layout
+
+\begin_layout Plain Layout
+
+                        despertar_si_reader()
+\end_layout
+
+\begin_layout Plain Layout
+
+        }
+\end_layout
+
+\begin_layout Plain Layout
+
+        readers++
+\end_layout
+
+\begin_layout Plain Layout
+
+        unlock(q_lock)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Con un razonamiento similar, el runlock() deberá decrementar la cantidad
+ de readers, y si es el último reader en liberar el lock, y la cola no está
+ vacía (necesariamente es un wlock lo que se ha encolado), se debe despertar
+ al siguiente pués al no haber ningún reader ya puede correr el write.
+ Es decir, un pseudocodigo para el runlock sería:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+runlock():
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+       lock(q_lock)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        readers--
+\end_layout
+
+\begin_layout Plain Layout
+
+        if (readers == 0)
+\end_layout
+
+\begin_layout Plain Layout
+
+                despertar_prox()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        unlock(&q_lock)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
