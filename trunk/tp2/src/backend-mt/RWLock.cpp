@@ -1,9 +1,6 @@
 #include "RWLock.h"
 #include <assert.h>
 
-// Debug
-#include <iostream>
-
 
 using namespace std;
 
