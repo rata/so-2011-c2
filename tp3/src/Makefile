@@ -1,7 +1,7 @@
 MPICC   = mpicc
 MPIEXEC = mpiexec
-#CFLAGS += -Wall -std=c99 -D_XOPEN_SOURCE=500 -DNDEBUG
-CFLAGS += -Wall -std=c99 -D_XOPEN_SOURCE=500
+CFLAGS += -Wall -std=c99 -D_XOPEN_SOURCE=500 -DNDEBUG
+#CFLAGS += -Wall -std=c99 -D_XOPEN_SOURCE=500
 
 EJECUTABLE = tp3
 
