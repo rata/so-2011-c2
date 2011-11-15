@@ -1,12 +1,13 @@
 MPICC   = mpicc
 MPIEXEC = mpiexec
-CFLAGS += -Wall
+#CFLAGS += -Wall -std=c99 -D_XOPEN_SOURCE=500 -DNDEBUG
+CFLAGS += -Wall -std=c99 -D_XOPEN_SOURCE=500
 
 EJECUTABLE = tp3
 
 .PHONY : all new clean run
 
-all : $(EJECUTABLE) run
+all : $(EJECUTABLE)
 
 tp3 : tp3.c srv.c
 	$(MPICC) $(CFLAGS) -o tp3 tp3.c srv.c
