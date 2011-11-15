@@ -22,7 +22,6 @@ void send_broadcast_req()
 void servidor(int mi_cliente)
 {
 	MPI_Status status;
-	int origen, tag;
 	MPI_Comm_rank(MPI_COMM_WORLD, &me);
 	MPI_Comm_size(MPI_COMM_WORLD, &n);
 	int outstanding_reply = (n/2) - 1;
@@ -41,8 +40,8 @@ void servidor(int mi_cliente)
 		
 		int buf;
 		MPI_Recv(&buf, 1, MPI_INT, ANY_SOURCE, ANY_TAG, COMM_WORLD, &status);
-		origen = status.MPI_SOURCE;
-		tag = status.MPI_TAG;
+		int origen = status.MPI_SOURCE;
+		int tag = status.MPI_TAG;
 
 		switch (tag) {
 		case TAG_PEDIDO:
@@ -126,7 +125,7 @@ void servidor(int mi_cliente)
 			assert(0);
 		}
 	}
+
 	printf("servidor finalizado\n");
 	free(reply_deferred);
-	
 }
