@@ -23,6 +23,7 @@
 #define TAG_TERMINE           50    /* cli -> srv */
 #define SRV_REQ               60    /* srv -> srv */
 #define SRV_REPLY             70    /* srv -> srv */
+#define SRV_FINISHED          80    /* srv -> srv */
 
 /* Abreviaciones de constantes MPI que usaremos seguido */
 
