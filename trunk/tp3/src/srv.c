@@ -37,7 +37,7 @@ void servidor(int mi_cliente)
 	for (int i = 0; i < n/2; i++)
 		reply_deferred[i] = FALSE;
 
-	while (! listo_para_salir) {
+	while (!listo_para_salir) {
 		
 		int buf;
 		MPI_Recv(&buf, 1, MPI_INT, ANY_SOURCE, ANY_TAG, COMM_WORLD, &status);
