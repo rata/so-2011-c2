@@ -31,14 +31,13 @@ void servidor(int mi_cliente)
 	
 	/* Array para guardar los reply que "postergamos" a los servidores
 	 * Como hay n servidores y 2n procesos, la cantidad de servidores es la cantidad de procesos sobre 2
-	 * TODO: hacer el free de esto!
 	 */
 	int *reply_deferred = malloc(sizeof(int) * (n/2));
 	assert(reply_deferred != NULL);
 	for (int i = 0; i < n/2; i++)
 		reply_deferred[i] = FALSE;
 
-	while( ! listo_para_salir ) {
+	while (! listo_para_salir) {
 		
 		int buf;
 		MPI_Recv(&buf, 1, MPI_INT, ANY_SOURCE, ANY_TAG, COMM_WORLD, &status);
@@ -128,6 +127,6 @@ void servidor(int mi_cliente)
 		}
 	}
 	printf("servidor finalizado\n");
+	free(reply_deferred);
 	
 }
-
