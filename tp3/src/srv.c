@@ -37,16 +37,23 @@ void servidor(int mi_cliente)
 	MPI_Status status;
 	MPI_Comm_rank(MPI_COMM_WORLD, &me);
 	MPI_Comm_size(MPI_COMM_WORLD, &n);
-	int outstanding_reply = (n/2) - 1;
-	int hay_pedido_local = FALSE;
 	int listo_para_salir = FALSE;
+
+	// Se corresponde con la variable "requesting_critical_section" del paper
+	int hay_pedido_local = FALSE;
+
+	// La cantidad de clientes que todavia estan corriendo
 	int clients_alive = n/2;
+
+	// La cantidad de servidores que falta que respondan un SRV_REQ
+	int outstanding_reply;
 	
 	/* Array para guardar los reply que "postergamos" a los servidores
 	 * Como hay n servidores y 2n procesos, la cantidad de servidores es la cantidad de procesos sobre 2
 	 */
 	int *reply_deferred = malloc(sizeof(int) * (n/2));
 	assert(reply_deferred != NULL);
+
 	for (int i = 0; i < n/2; i++)
 		reply_deferred[i] = FALSE;
 
