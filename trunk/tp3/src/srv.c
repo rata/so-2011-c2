@@ -149,7 +149,7 @@ void servidor(int mi_cliente)
 			clients_alive--;
 			if (clients_alive == 0)
 				listo_para_salir = TRUE;
-
+			break;
 
 		default:
 			debug("Tag desconocido!");
