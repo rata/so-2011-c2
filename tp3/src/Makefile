@@ -17,5 +17,6 @@ run : tp3
 
 clean :
 	rm -f $(EJECUTABLE)
+	rm -f *.o
 
 new : clean all
