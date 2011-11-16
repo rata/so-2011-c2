@@ -1,0 +1,301 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Sistemas Operativos
+\begin_inset Newline newline
+\end_inset
+
+Trabajo Práctico III
+\end_layout
+
+\begin_layout Author
+Federico Huel (329/07)
+\begin_inset Newline newline
+\end_inset
+
+Juán Manuel Lomonaco (603/07)
+\begin_inset Newline newline
+\end_inset
+
+Rodrigo Campos (561/06)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Detalles de implementación
+\end_layout
+
+\begin_layout Standard
+Solo fue necesario cambiar el código del servidor provisto por la cátedra,
+ ya que ésta era la única parte 
+\begin_inset Quotes eld
+\end_inset
+
+sin implementar
+\begin_inset Quotes erd
+\end_inset
+
+ (o con una implementación a modo de ejemplo que no era correcta).
+ Y el envío de mensajes al que se refiere el paper 
+\begin_inset Quotes eld
+\end_inset
+
+An optimal algorithm for mutual exclusion in computer networks
+\begin_inset Quotes erd
+\end_inset
+
+, en el contexto de este trabajo, se refiere a envío de mensajes entre servidore
+s.
+\end_layout
+
+\begin_layout Subsection*
+Implementación del algoritmo usando message-passing
+\end_layout
+
+\begin_layout Standard
+El paper plantea tres procesos, cada uno con distintas responsabilidades.
+ Y si bien la separación en procesos hace que la explicación sea clara,
+ no es así como se lo decidió implementar: se usó un único proceso que cumple
+ las funciones de los 3 procesos planteados en el paper.
+ De esta forma, el proceso de un servidor realiza un 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Recv
+\begin_inset Quotes erd
+\end_inset
+
+ de cualquier source y tag y, de acuerdo a lo que haya recibido, es de acuerdo
+ a qué proceso del paper actúa.
+\end_layout
+
+\begin_layout Standard
+También, en el servidor se decidió extender el código provisto por la cátedra.
+ Por lo que los nombres de las variables que se seguían necesitando no se
+ modificaron.
+ Sin embargo, para un claro mapeo del pseudocódigo al código, para las nuevas
+ variables se decidió utilizar, cuando fue posible, el mismo nombre que
+ poseen en el paper.
+\end_layout
+
+\begin_layout Standard
+No hay nada más que creamos necesario destacar, el código está debidamente
+ comentado y se mapea, a nuestro entender, fácilmente con el paper.
+\end_layout
+
+\begin_layout Subsection*
+Criterio de parada del sistema
+\end_layout
+
+\begin_layout Standard
+El criterio de parada del sistema es que todos los servidores siguen corriendo,
+ e intercambiando mensajes, hasta que no quede ningún cliente.
+ Cuando no queda ningún cliente, todos los servidores paran y, así, terminan
+ todos los procesos.
+\end_layout
+
+\begin_layout Standard
+Para lograr esto, todos los servidores tienen una cuenta de cuántos clientes
+ hay corriendo.
+ Cada vez que un cliente deja de correr, el servidor asociado decrementa
+ su contador y le avisa a todo el resto de los servidores para que decrementen
+ sus contadores.
+ Si no queda ningún cliente corriendo, el servidor termina.
+\end_layout
+
+\begin_layout Subsection*
+Limitaciones
+\end_layout
+
+\begin_layout Itemize
+Cuando uno o más clientes dejan de correr, los servidores asociados siguen
+ corriendo y es necesario, para el correcto funcionamiento del sistema,
+ que se le envíen los mensajes y esperar su respuesta.
+ Esto podría ser evitado, ya que el cliente asociado a ese servidor no está
+ corriendo y no necesita entonces ser notificado cuando otro proceso accede
+ a la sección crítica.
+\end_layout
+
+\begin_layout Itemize
+Se usa la funcion 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+ que 
+\series bold
+puede 
+\series default
+bloquear hasta que el receptor del mensaje haga el correspondiente 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Recv
+\begin_inset Quotes erd
+\end_inset
+
+.
+ En la práctica esto puede pasar, por ejemplo, cuando todos los cientes
+ de todos los servidores piden acceso a la sección crítica simultáneamente.
+ Al hacer esto, se le manda un mensaje a todo el resto de los servidores
+ usando 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Y si todos los servidores se encuentran ejecutando el 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+, entonces ninguno se encuentra ejecutando el 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Recv
+\begin_inset Quotes erd
+\end_inset
+
+, y esto podría bloquearse indefinidamente.
+ Otro ejemplo que podría causar problema con 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+ en la práctica es cuando dos clientes, A y B, piden acceso a la sección
+ crítica y el servidor asociado a A, al ejecutar 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+, le quiere mandar un mensaje al servidor asociado a B mientras que el servidor
+ asociado a B, al ejecutar 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+, le quiere mandar un mensaje al servidor asociado a A.
+ Es decir, si un servidor C está haciendo un 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+ a un servidor D mientras que D está haciendo un 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+ a C.
+\end_layout
+
+\begin_layout Standard
+Igualmente, se preguntó si eran aceptables estas limitaciones a la cátedra,
+ quien dijo que sí.
+ También, vale la pena mencionar que la segunda limitación nunca la pudimos
+ chocar en la práctica con hasta 60 procesos.
+ Y la implementación se probó tanto con mpich2 1.4.1 como con openmpi 1.4.3.
+ Se supone que quizás esta segunda limitación probablemente no ocurra en
+ la práctica porque 
+\begin_inset Quotes eld
+\end_inset
+
+MPI_Send
+\begin_inset Quotes erd
+\end_inset
+
+ se la usa para mandar: buffers vacíos (donde solo el tag interesa) y buffers
+ de a lo sumo un entero.
+\end_layout
+
+\end_body
+\end_document
