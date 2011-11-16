@@ -63,6 +63,8 @@ void servidor(int mi_cliente)
 			debug("Mi cliente solicita acceso exclusivo");
 			assert(hay_pedido_local == FALSE);
 			hay_pedido_local = TRUE;
+
+			// Falta recibir respuesta de todos los servidores menos yo
 			outstanding_reply = (n/2) - 1;
 			
 			/* Pedir tag a los demas servidores */
@@ -77,7 +79,6 @@ void servidor(int mi_cliente)
 			debug("Mi cliente libera su acceso exclusivo");
 			assert(hay_pedido_local == TRUE);
 			hay_pedido_local = FALSE;
-			outstanding_reply = (n/2) - 1;
 
 			/* Procesar los reply_deferred */
 			for (int i = 0; i < n/2; i++) {
@@ -88,24 +89,6 @@ void servidor(int mi_cliente)
 				}
 			}
 			
-			break;
-			
-		case TAG_TERMINE:
-			assert(origen == mi_cliente);
-			debug("Mi cliente avisa que terminó");
-
-			// Si mi cliente termino, hay un cliente menos
-			clients_alive--;
-
-			// Le aviso al resto de los servidores que hay un
-			// cliente menos, asi actualizan la variable de
-			// cantidad de clientes vivos
-			send_broadcast_finished();
-
-			// Si mi cliente era el ultimo, estoy listo para salir
-			if (clients_alive == 0)
-				listo_para_salir = TRUE;
-		
 			break;
 			
 		case SRV_REQ:
@@ -136,10 +119,24 @@ void servidor(int mi_cliente)
 		
 			break;
 
+		case TAG_TERMINE:
+			assert(origen == mi_cliente);
+			debug("Mi cliente avisa que terminó");
+
+			// Le aviso al resto de los servidores que hay un
+			// cliente menos, asi actualizan la variable de
+			// cantidad de clientes vivos
+			send_broadcast_finished();
+
+			// NO hago el break. Sigo ejecutando el codigo de
+			// SRV_FINISHED que es identico a lo que deberia hacer
+			// aca
+
 		case SRV_FINISHED:
 
-			// Termino el cliente de algun servidor (no el mio). Asique queda un cliente menos
-			// PEro si ese cliente era el ultimo, estoy listo para salir.
+			// Termino el cliente de algun servidor. Asique queda
+			// un cliente menos. Pero si ese cliente era el ultimo,
+			// estoy listo para salir.
 			clients_alive--;
 			if (clients_alive == 0)
 				listo_para_salir = TRUE;
