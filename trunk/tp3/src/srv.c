@@ -1,9 +1,11 @@
 #include "srv.h"
+#include <stdlib.h>	// abort()
+#include <assert.h>	// assert()
 
 static int me;
 static int n;
-static int our_seq_num = 0;
-static int max_seq_num = 0;
+static int our_seq_nr = 0;
+static int max_seq_nr = 0;
 
 
 void send_broadcast_req()
@@ -14,7 +16,7 @@ void send_broadcast_req()
 		if (srv == me)
 			continue;
 		// XXX: esta bien usar el MPI_Send (teniendo en cuenta que puede bloquear hasta que el otro lado haga Recv) ?
-		MPI_Send(&our_seq_num, 1, MPI_INT, srv, SRV_REQ, COMM_WORLD);
+		MPI_Send(&our_seq_nr, 1, MPI_INT, srv, SRV_REQ, COMM_WORLD);
 	}
 	
 }
@@ -76,7 +78,7 @@ void servidor(int mi_cliente)
 			
 			/* Pedir tag a los demas servidores */
 			debug("Mandando SRV_REQ BROADCAST");
-			our_seq_num = max_seq_num + 1;
+			our_seq_nr = max_seq_nr + 1;
 			send_broadcast_req();
 			
 			break;
@@ -101,12 +103,12 @@ void servidor(int mi_cliente)
 		case SRV_REQ:
 			debug("llego SRV_REQ");
 			int k = buf;
-			max_seq_num = (k > max_seq_num) ? k: max_seq_num;
+			max_seq_nr = (k > max_seq_nr) ? k: max_seq_nr;
 
-			if (hay_pedido_local && (k > our_seq_num || (k == our_seq_num && origen > me))) {
-				int srv = origen/2;
-				assert(srv < n/2);
-				reply_deferred[srv] = TRUE;
+			if (hay_pedido_local && (k > our_seq_nr || (k == our_seq_nr && origen > me))) {
+				int srv_idx = origen/2;
+				assert(srv_idx < n/2);
+				reply_deferred[srv_idx] = TRUE;
 				break;
 			}
 			
@@ -151,7 +153,7 @@ void servidor(int mi_cliente)
 
 		default:
 			debug("Tag desconocido!");
-			assert(0);
+			abort();
 		}
 	}
 
