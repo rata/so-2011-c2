@@ -1,0 +1,17 @@
+set terminal png enhanced size 1024,768
+#set style data linespoints
+
+
+set output "plot/ej8-1.png"
+set title "Distancia de la cantidad de sorteos ganados a la esperanza"
+set autoscale # scale axes automatically
+set xlabel "Distintas ejecuciones"
+set ylabel "Modulo del error"
+plot 'out/ej8-1.out' using 1:2 title ""
+
+set output "plot/ej8-1-2.png"
+set title "Distancia de la cantidad de sorteos ganados a la esperanza"
+set autoscale # scale axes automatically
+set xlabel "Distintas ejecuciones"
+set ylabel "Modulo del error"
+plot 'out/ej8-1.out-2' using 1:2 title ""
