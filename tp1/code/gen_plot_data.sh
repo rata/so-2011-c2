@@ -25,8 +25,7 @@ TSK_LINES=$(cat $TSK | grep -v '^#' | grep -P -v "^( |\t)*$" | wc -l)
 
 rm -f $F
 
-#tmpf=$(mktemp)
-tmpf="asd"
+tmpf=$(mktemp)
 for q in $ITERS; do
 
 	# Corremos el simulador para este quantum
@@ -48,4 +47,4 @@ for q in $ITERS; do
 	done
 done
 
-#rm $tmpf
+rm $tmpf
