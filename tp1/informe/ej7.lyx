@@ -1,42 +1,60 @@
-#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass article
 \use_default_options true
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -48,58 +66,6 @@ Ejercicio 7
 \begin_layout Standard
 A continuación se justifica para cada una de las medidas, la mejor elección
  de quantum.
-\end_layout
-
-\begin_layout Standard
-Como lote de tareas se usó:
-\begin_inset Formula \[
-TaskBatch\,20\,8\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-TaskBatch\,20\,13\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-TaskBatch\,20\,9\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-TaskBatch\,20\,17\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-TaskBatch\,20\,19\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Es decir, todas usan 20 ciclos como tiempo de CPU y la cantidad de llamadas
- bloqueantes que realizan fueron elegidas random entre números de 0 a 19
- (ambos inclusive)
 \end_layout
 
 \begin_layout Standard
@@ -127,8 +93,8 @@ Eficiencia
 \end_layout
 
 \begin_layout Standard
-No importa el valor de quantum elegido, el scheduler siempre trata de que
- esté ocupado todo el tiempo la CPU.
+Bajo esta definición, no importa el valor de quantum elegido, el scheduler
+ siempre trata de que esté ocupado todo el tiempo la CPU.
  Si un proceso se bloquea, entonces comienza a ejecturar otro.
  Solo se ejecutará el proceso 
 \begin_inset Quotes eld
@@ -149,6 +115,22 @@ idle
 
  ni bien otro proceso esté en estado listo.
  Luego, trata de que el CPU esté ocupado todo el tiempo.
+\end_layout
+
+\begin_layout Standard
+Sin embargo es importante notar que usando otra definición de eficiencia,
+ esta conclusión podría no ser cierta.
+ En particular usando una definición que tenga en cuenta que el tiempo de
+ CPU sea usado en algo 
+\begin_inset Quotes eld
+\end_inset
+
+útil
+\begin_inset Quotes erd
+\end_inset
+
+ (para alguna definición de utilidad), a priori el razonamiento previo no
+ aplica.
 \end_layout
 
 \begin_layout Standard
@@ -248,43 +230,265 @@ Es decir, en el peor caso y con
 \end_layout
 
 \begin_layout Standard
-Para analizar el tiempo de ejecución y el rendimiento, se tendrán en cuenta
- los siguientes gráficos:
+
+\series bold
+Tiempo de ejecucion
+\series default
+: minimizar el tiempo total que le toma a un proceso ejecutar completamente.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status collapsed
+Los ciclos de reloj utilizados para el cambio de contexto son ciclos en
+ los que no se aprovechan para ejecutar ningún proceso en sí, sino mas bien
+ para 
+\begin_inset Quotes eld
+\end_inset
 
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename /home/rodrigo/public_html/facu/so/so-2011-c2/tp1/code/ej7-gr1-q2.png
-	width 14cm
+administración
+\begin_inset Quotes erd
+\end_inset
+
+.
+ El resto de los ciclos sí son usados para ejecutar los procesos.
+ Intuitivamente parece que al maximizar el quantum se minimizan los cambios
+ de contexto, haciendo así que la cantidad de ciclos de reloj total sea
+ menor.
+ Si se tiene 
+\begin_inset Formula $n$
+\end_inset
+
+ procesos que cada uno tarda en ejecutar 
+\begin_inset Formula $n_{i}$
+\end_inset
+
+ ciclos, el proceso 
+\begin_inset Formula $p$
+\end_inset
+
+ necesitará esperar el CPU al menos
+\begin_inset Formula $\left\lceil \frac{n_{p}}{q}\right\rceil $
+\end_inset
+
+veces, y con valores mas grandes de 
+\begin_inset Formula $q$
+\end_inset
+
+ necesitará esperarlo menos veces ya que 
+\begin_inset Formula $\left\lceil \frac{n_{p}}{q}\right\rceil $
+\end_inset
+
+ es menor.
+ 
+\end_layout
+
+\begin_layout Standard
+Asumiendo que ningun proceso termina mientras el proceso 
+\begin_inset Formula $p$
+\end_inset
+
+ ejecuta, todos los procesos ejecutan durante todo su quantum y 
+\begin_inset Formula $cs$
+\end_inset
+
+ es la cantidad de ciclos de reloj que lleva un cambio de contexto, el proceso
+ 
+\begin_inset Formula $p$
+\end_inset
+
+ tardará al menos:
+\begin_inset Formula 
+\[
+n_{p}+\left\lceil \frac{n_{p}}{q}\right\rceil \times\sum_{i=1}^{n-1}(q+cs)=n_{p}+\left\lceil \frac{n_{p}}{q}\right\rceil \times((n-1)q+(n-1)cs)=n_{p}+\left\lceil \frac{n_{p}}{q}\right\rceil (n-1)q+\left\lceil \frac{n_{p}}{q}\right\rceil (n-1)cs
+\]
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Con quantum 2
+\begin_layout Standard
+ciclos en terminar desde que comienza a ejecutar.
 \end_layout
+
+\begin_layout Standard
+Sea 
+\begin_inset Formula $q>q'$
+\end_inset
+
+ y 
+\begin_inset Formula $q,q'$
+\end_inset
+
+ divisores de 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+ se tiene:
+\begin_inset Formula 
+\[
+n_{p}+\left\lceil \frac{n_{p}}{q}\right\rceil (n-1)q+\left\lceil \frac{n_{p}}{q}\right\rceil (n-1)cs<n_{p}+\left\lceil \frac{n_{p}}{q'}\right\rceil (n-1)q'+\left\lceil \frac{n_{p}}{q'}\right\rceil (n-1)cs
+\]
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Plain Layout
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{n_{p}}{q}(n-1)q+\frac{n_{p}}{q}(n-1)cs<\frac{n_{p}}{q'}(n-1)q'+\frac{n_{p}}{q'}(n-1)cs
+\]
+
+\end_inset
+
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\[
+n_{p}(n-1)+\frac{n_{p}}{q}(n-1)cs<n_{p}(n-1)+\frac{n_{p}}{q'}(n-1)cs
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{n_{p}}{q}(n-1)cs<\frac{n_{p}}{q'}(n-1)cs
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{n_{p}}{q}<\frac{n_{p}}{q'}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+n_{p}q'<n_{p}q
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+q'<q
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Luego, valores de cuantum más grandes, pero múltiplos de la cantidad de
+ ciclos a ejecutar por un proceso, minimizan la cantidad de ciclos que le
+ lleva a un proceso terminar.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Rendimiento (throughput)
+\series default
+: maximizar el numero de procesos terminados por unidad de tiempo.
+\end_layout
+
+\begin_layout Standard
+Intuitivamente pareciera que si se minimiza la cantidad de ciclos que le
+ lleva a un proceso terminar, la cantidad de procesos terminados por unidad
+ de tiempo va a ser mayor.
+ Trataremos de ver experimentalmente si esto es así o no.
+\end_layout
+
+\begin_layout Standard
+Para hacer esto se utilizaron tareas batch (interactivas) que hagan una
+ cantidad de bloqueos baja en relación al tiempo de CPU que usan.
+ Esto es porque si la cantidad de bloqueos es la máxima, fuerza a que se
+ ejecute necesariamente de la única forma posible y para muchos valores
+ de quantum se bloqueará antes de que éste termine.
+ En cambio, si la cantidad de bloqueos es baja, podrá aprovechar el quantum.
+ Como lote de tareas se usó:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+TaskBatch\,50\,1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+TaskBatch\,50\,2
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+TaskBatch\,50\,3
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+TaskBatch\,50\,4
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+TaskBatch\,50\,5
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A continuación se puede ver graficada la cantidad total de ciclos de CPU
+ usados para correr todas las tareas del lote sobre la cantidad de tareas,
+ para distintos quantums.
+ Es decir para cada quantum se grafica 
+\begin_inset Formula $\frac{<\#ciclos\, totales>}{5}$
 \end_inset
 
 
@@ -299,7 +503,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../code/ej7-gr1-q21.png
+	filename ../code/plot/ej7-1.png
 	width 14cm
 
 \end_inset
@@ -307,19 +511,52 @@ status open
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Se decidió graficar 
+\begin_inset Formula $\frac{<\#ciclos\, totales>}{5}$
+\end_inset
+
+ y no la fracción inversa, que se corresponde con el rendimiento, porque
+ de esta forma el resultado es un número más grande que permite graficarlo
+ más fácilmente.
+ Tener en cuenta esto al analizar el gráfico.
+\end_layout
+
+\begin_layout Standard
+Acá se puede ver que la cantidad de procesos terminados por ciclo de clock
+ es mayor con quantums más grande, hasta cierto punto donde esto ya no mejora
+ más.
+ Esto tiene sentido pues de seguro nunca tardaran menos en ejecutar que
+ la suma de los tiempos que requiere cada tarea, y probablemente haya otra
+ cota inferior más grande que no viene al caso analizar.
+\end_layout
+
+\begin_layout Standard
+También nos pareció interesante graficar la cantidad de procesos terminados
+ en funcion de los ciclos de clock, para distintos quantums.
+ Es decir, para todos los quantum, cuantos procesos habian terminado hasta
+ un ciclo de clock cualquiera:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
 \begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Con quantum 21
-\end_layout
+\begin_inset Graphics
+	filename ../code/plot/ej7-2.png
+	width 14cm
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
 
 \end_layout
 
@@ -329,83 +566,11 @@ Con quantum 21
 \end_layout
 
 \begin_layout Standard
-El ciclo en el que termina el primer proceso, al cabo de varias corridas,
- parece ser bastante estable.
- Es decir, no se ve muy afectado por el random de cuándo son la tareas de
- IO.
- Lo mismo pasó para el ciclo en el que termina el segundo proceso: luego
- de varias corridas parece terminar siempre en una cantidad de ciclos bastante
- estable.
- Y lo mismo para el resto de los procesos.
- También, esto pasó tanto con quantum 21 como con quantum 2.
- Por lo que se eligió poner un solo gráfico con quantum 21 y otro con quantum
- 2, ya que parecen ser significativos.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Tiempo de ejecucion
-\series default
-: minimizar el tiempo total que le toma a un proceso ejecutar completamente.
-\end_layout
-
-\begin_layout Standard
-Con quantum 21 (mayor al tiempo de CPU usado por todas las tareas) se puede
- ver que la distribución de en qué ciclo terminan los procesos se minimiza
- con respecto al gráfico con quantum 2.
- Es decir, el primer proceso en terminar ocupa menos ciclos usando quantum
- 21 que quantum 2.
- Y lo mismo pasa para el resto de los procesos: el segundo proceso en terminar
- demora menos ciclos cuando corre con quantum 21, etc.
- De hecho, el promedio de la cantidad de ciclos que toma en finalizar la
- tarea con quantum 21 es: 
-\begin_inset Formula $(106+122+147+165+175)/5=143$
-\end_inset
-
-.
- En cambio, con quantum 2, el promedio es: 
-\begin_inset Formula $(140+152+165+175+185)/5=163.4$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-También, parece razonable, ya que al usar un quantum más pequeño se interrumpe
- a un proceso antes de bloquearse.
- Y si bien es verdad que con un quantum mas pequeño la demora en volver
- a ejecutarse es menor, el tiempo que ejecuta también es menor y esto parece
- ser dominante y demora el tiempo que tarda un proceso en ejecutarse completamen
-te.
- Además, al modificar el quantum se está cambiando también la relación 
-\begin_inset Formula $\frac{contextSwitch}{quantum}$
-\end_inset
-
-.
- Es decir, con un quantum mas grande, el tiempo usado en cambios de contexto
- es menor, por lo que hay más tiempo de CPU usado para ejecutar las tareas
- propiamente dichas.
-\end_layout
-
-\begin_layout Standard
-Es decir, un quantum mas grande parece optimizar el tiempo de ejecución.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Rendimiento (throughput)
-\series default
-: maximizar el numero de procesos terminados por unidad de tiempo.
-\end_layout
-
-\begin_layout Standard
-En el gráfico se puede ver que para cualquier intervalo de tiempo, con quantum
- 21, el numero de procesos terminados por unidad de tiempo es siempre mayor
- o igual a el numero de procesos terminados por unidad de tiempo con quantum
- 2.
- 
+Este gráfico muestra que con quantums mas grandes el primer proceso termina
+ en menos ciclos, lo mismo para el segundo proceso, etc.
+ Luego, la cantidad de procesos terminados por ciclo de clock es siempre
+ mayor o igual con un quantum más grande, para cualquier intervalo que comience
+ en el ciclo de clock 0.
 \end_layout
 
 \begin_layout Standard
