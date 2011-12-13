@@ -1,42 +1,60 @@
-#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass article
 \use_default_options true
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -46,48 +64,148 @@ Ejercicio 8
 \end_layout
 
 \begin_layout Standard
-Para poder observar la aleatoreidad del algoritmo del sorteo de los tickets
- se realizaron varias ejecuciones para un mismo lote que contiene tareas
- de consumo de CPU como también tareas Batch con el objetivo de mostrar
- que no es determinante si las tareas se bloquean o no en relación a cuánto
- quantum recibirá en un período de tiempo en promedio.
- Éste lote contiene 5 tareas de CPU y 5 tareas Batch.
- Todas ellas consumen 1000 ciclos de CPU mientras que la cantidad de bloqueos
- son diferentes.
- Ésto permite poder comparar las tareas y ver que el tiempo de finalización
- de todas no es muy diferente por lo que la esperanza del quantum otorgado
- a cada tarea en promedio tiende a estabilizarse.
- Las ejecuciones se realizaron con distintas cantidad de quantum para observar
- que ésto tampoco influye demasiado en la aleatoreidad (Siempre que el quantum
- se pequeño en comparación a la cantidad de ciclos de CPU a ejecutar).
+En el paper 
+\begin_inset Quotes eld
+\end_inset
+
+Lottery scheduling: Flexible proportional-share resource management
+\begin_inset Quotes erd
+\end_inset
+
+ citado en el enunciado del trabajo práctico, menciona que si X es la variable
+ aleatoria que cuenta la cantidad de veces que un proceso salió sorteado
+ como siguiente proceso a ejecutar, entonces X tiene distribución binomial.
+ La cantidad de sorteos es las veces que se repite el experimento y 
+\begin_inset Formula $p$
+\end_inset
+
+ la probabilidad de ganar un sorteo, que depende de los tickets que tenga
+ el proceso.
 \end_layout
 
 \begin_layout Standard
-La cantidad de bloqueos para cada tarea batch es la siguiente:
+Trataremos de estimar experimentalmente la esperanza al cabo de varios sorteos
+ y la compararemos con la esperanza teórica de la distribución binomial
+ para los parámetros dados.
+ Es importante notar que si un proceso se crea, o muere, entonces 
+\begin_inset Formula $p$
+\end_inset
+
+ varía.
+ Lo mismo pasa si una tarea se bloquea, ya que se le dan 
+\begin_inset Quotes eld
+\end_inset
+
+Compensation tickets
+\begin_inset Quotes erd
+\end_inset
+
+, alterando así las probabilidades.
+ Para centrarnos solo en la aleatoriedad del algoritmo se deja de lado estas
+ situaciones y se analizará un lote de tareas que sean solo de uso de CPU
+ (pues si una tarea se bloquea se le otorgan 
+\begin_inset Quotes eld
+\end_inset
+
+Compensation tickets
+\begin_inset Quotes erd
+\end_inset
+
+ modificando 
+\begin_inset Formula $p$
+\end_inset
+
+), todas las tareas del lote comenzarán a la vez y solo se analizará mientras
+ todas las tareas del lote estén corriendo (de caso contrario se crearían/morirí
+an procesos alterando el valor de 
+\begin_inset Formula $p$
+\end_inset
+
+).
+ Entonces, como lote de tareas se decidió usar el siguiente:
 \end_layout
 
 \begin_layout Standard
-Tarea 5: 5 bloqueos
+\begin_inset Formula 
+\[
+TaskCPU\,100
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Tarea 6: 10 bloqueos
+\begin_inset Formula 
+\[
+TaskCPU\,100
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Tarea 7: 15 bloqueos
+\begin_inset Formula 
+\[
+TaskCPU\,100
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Tarea 8: 20 bloqueos 
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula 
+\[
+TaskCPU\,100
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Tarea 9: 30 bloqueos
+\begin_inset Formula 
+\[
+TaskCPU\,100
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Los resultados obtenidos fueron los siguientes:
+La elección de cuantos ciclos de CPU usarán se hizo en función del quantum
+ para que el lote implique una cantidad no despreciables de sorteos cada
+ vez que se corre.
+ Entonces se eligió 10 como quantum y 100 como tiempo de CPU que requiere
+ una tarea del lote.
+ Además, como solo es importante para este análisis qué proceso ganó cada
+ sorteo, se usó 0 como tiempo de cambio de contexto, ya que no aportaba
+ realmente nada.
+\end_layout
+
+\begin_layout Standard
+A continuación se grafica para 100 corridas con semilla elegida al azar
+ la distancia entre la esperanza y la cantidad de sorteos que ganó un proceso:
 \end_layout
 
 \begin_layout Standard
@@ -99,7 +217,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../code/ej8-gr2-q10.png
+	filename ../code/plot/ej8-1.png
 	width 14cm
 
 \end_inset
@@ -107,21 +225,27 @@ status collapsed
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-quantum 10
-\end_layout
-
 \end_inset
 
 
 \end_layout
 
+\begin_layout Standard
+Como los puntos están muy dispersos los puntos en el gráfico, se decidió
+ hacer otro gráfico usando redondeo al entero más cercano del error.
+ De esta forma se puede ver mejor la distribución de los puntos (aunque
+ perdiendo 
+\begin_inset Quotes eld
 \end_inset
 
+precisión
+\begin_inset Quotes erd
+\end_inset
 
+).
+ Viendo el siguiente gráfico nos ayudó a interpretar mejor el gráfico anterior,
+ ya que podemos ver cómo están dispersos y en el siguiente se puede ver
+ mejor cómo se distribuyen los puntos cuando se redondea al entero mas cercano.
 \end_layout
 
 \begin_layout Standard
@@ -133,7 +257,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../code/ej8-gr3-q20.png
+	filename ../code/plot/ej8-2.png
 	width 14cm
 
 \end_inset
@@ -141,21 +265,33 @@ status collapsed
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-quantum 20
-\end_layout
-
 \end_inset
 
 
 \end_layout
 
+\begin_layout Standard
+También, es importante notar que la variable aleatoria X: 
+\begin_inset Quotes eld
 \end_inset
 
+cantidad de sorteos ganados por el proceso 0
+\begin_inset Quotes erd
+\end_inset
 
+ es discreta y siempre tomará un valor entero.
+ Por lo que si la esperanza es 8.2 y X en nuestra muestra es 8, es el entero
+ más cercano.
+ Entonces tiene sentido interpretar al error como 0, ya que no hay otro
+ entero más cercano.
+ Esto fue motivo, también, para realizar el gráfico anterior.
+\end_layout
+
+\begin_layout Standard
+Sin embargo, a modo de resúmen, se graficó el porcentaje de veces a lo largo
+ de las corridas que el error, redondeando al entero mas cercano, fue 0,
+ 1, 2, 3 y 4 para los distintos procesos.
+ Se obtuvo el siguiente gráfico de barras:
 \end_layout
 
 \begin_layout Standard
@@ -163,11 +299,11 @@ quantum 20
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../code/ej8-gr4-q50.png
+	filename ../code/plot/ej8-3.png
 	width 14cm
 
 \end_inset
@@ -176,14 +312,6 @@ status collapsed
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-quantum 50
-\end_layout
-
-\end_inset
-
 
 \end_layout
 
@@ -193,22 +321,12 @@ quantum 50
 \end_layout
 
 \begin_layout Standard
-Dados los resultados, se puede ver que la distribución del tiempo que le
- tomó a cada tarea realizar sus ejecuciones no depende de la cantidad de
- bloqueos ni del orden en el que fueron cargadas sino que se dió en forma
- aleatoria y el tiempo tomado por cada tarea varía en cada una de las ejecucione
-s, haciendo que tareas que pueden ser beneficiadas por el otorgamiento del
- quantum en algunas ejecuciones terminen siendo perjudicadas en otras.
- Como no hay demasiada diferencia entre el tiempo requerido para que cada
- tarea termine se puede deducir que la esperanza es 
-\begin_inset Formula $1/cantidadDeTareasPuestasEnEjecución$
+Acá se pude ver que en más del 
+\begin_inset Formula $25\%+35\%+20\%=80\%$
 \end_inset
 
-, ya que ésta puede estimarse usando el promedio.
- Al ser reducido el rango de tiempos de finalización de las diferentes tareas
- también se puede deducir que la varianza de la distribución es pequeña
- y ésto es otra muestra del grade de aleatoreidad del algoritmo al lograr
- una distribución del quantum bastante equitativa.
+ de las veces la distancia de la cantidad de sorteos ganados a la esperanza
+ fue menor a 2.
 \end_layout
 
 \end_body
