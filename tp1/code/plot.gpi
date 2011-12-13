@@ -9,9 +9,16 @@ set xlabel "Distintas ejecuciones"
 set ylabel "Modulo del error"
 plot 'out/ej8-1.out' using 1:2 title ""
 
-set output "plot/ej8-1-2.png"
+set output "plot/ej8-2.png"
 set title "Distancia de la cantidad de sorteos ganados a la esperanza"
 set autoscale # scale axes automatically
 set xlabel "Distintas ejecuciones"
-set ylabel "Modulo del error"
-plot 'out/ej8-1.out-2' using 1:2 title ""
+set ylabel "Modulo del error, redondeado al entero mas cercano"
+plot 'out/ej8-2.out' using 1:2 title ""
+
+set output "plot/ej8-3.png"
+set title "Porcentaje de error cometido para cada error al cabo de varias ejecuciones"
+set autoscale # scale axes automatically
+set xlabel "Errores (recondeados al entero mas cercano)"
+set ylabel "Porcentaje de veces de cometido el error"
+plot 'out/ej8-3.out' using 1:2 title "" with boxes

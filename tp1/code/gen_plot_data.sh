@@ -89,15 +89,16 @@ rm $tmpf
 # grafico 1
 
 
-F="out/ej8-1.out"
+F1="out/ej8-1.out"
+F2="out/ej8-2.out"
 ITERS="$(seq 1 100)"
 TSK="ej8-binomial.tsk"
 TSK_LINES=$(cat $TSK | grep -v '^#' | grep -P -v "^( |\t)*$" | wc -l)
 Q=10
 PROC=0
 
-rm -f $F
-rm -f $F-2
+rm -f $F1
+rm -f $F2
 
 tmpf=$(mktemp)
 
@@ -134,25 +135,45 @@ for i in $ITERS; do
 	error=$(bc -l <<< "$esperanza - $won")
 	error=${error#-}
 
-	#echo $i $error >> $F
+	echo $i $error >> $F1
 
 	# Redondeando al numero entero menor
 	# Si la distancia es 0.5 se puede decir que no le erro, porque la
 	# cantidad de sorteos que gano es entera. Entonces, usar numeros
 	# enteros para estas cuentas tiene cierto sentido
 	#echo -n "El error es: $error"
-	#error=$(awk "BEGIN { printf int($error) }")
+	#err1=$(awk "BEGIN { printf int($error) }")
 	#echo " redondenado a $error"
-	#echo $i $error >> $F
+	#echo $i $err1 >> $F
 
 	# Usando redondeo
 	#echo -n "El error es: $error"
-	error=$(awk "BEGIN { printf \"%.0f\", $error }")
+	err1=$(awk "BEGIN { printf \"%.0f\", $error }")
 	#echo " redondenado a $error"
-	echo $i $error >> $F
+	echo $i $err1 >> $F2
 done
 
 rm -f $tmpf
+
+# Ej8-3
+# Saca el porcenaje que gano cada proceso, reprocesando el archivo generado
+# out/ej8-2.out
+F="out/ej8-3.out"
+INPUT="out/ej8-2.out"
+
+rm -f $F
+
+# Lista con todos los errores (enteros) que se encontraron
+err_list=$(cat $INPUT | cut -d ' ' -f2 | sort -u)
+
+# Cantidad total de sorteos
+tot=$(wc -l $INPUT | cut -d ' ' -f1)
+
+for err in $err_list; do
+	cant_err=$(cat $INPUT | cut -d ' ' -f 2 | grep -c $err)
+	porcentaje=$(bc -l <<< "$cant_err * 100 / $tot")
+	echo $err $porcentaje >> $F
+done
 
 
 	
