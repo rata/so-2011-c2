@@ -1,0 +1,13 @@
+hai, segun el usage, toma como parametro un comando que eventualmente corre.
+
+Al correrlo con strace -f (para trazar a los hijos tambien) se ve que el proceso
+llama a fork():
+
+clone(Process 6522 attached child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x8904898) = 6522
+
+
+Luego el padre registra unos signal handlers para SIGINT, SIGCHLD y SIGURG,
+escribe "sup!" por stdout (fd = 1) y le manda la señal SIGURG al hijo. El hijo,
+cuando recibe la señal escribe, tambien en stdout, "ya va!". Y
+experimentalmente, para distintos comando, esto se repite 5 veces y luego el
+hijo ejecuta el comando y el padre espera a que el hijo termine.
