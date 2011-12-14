@@ -73,16 +73,28 @@ void servidor(int mi_cliente)
 			assert(hay_pedido_local == FALSE);
 			hay_pedido_local = TRUE;
 
-			// Falta recibir respuesta de todos los servidores menos yo
-			outstanding_reply = (n/2) - 1;
-			
 			/* Pedir tag a los demas servidores */
 			debug("Mandando SRV_REQ BROADCAST");
 			our_seq_nr = max_seq_nr + 1;
 			send_broadcast_req();
-			
-			break;
+
+			// Falta recibir respuesta de todos los servidores
+			// menos yo. Como sigo ejecutando el case siguiente, en
+			// vez de asignarle (n/2) - 1, le asigno (n/2) y en el
+			// case de abajo le resto 1
+			outstanding_reply = (n/2);
 		
+		case SRV_REPLY:
+			outstanding_reply -= 1;
+			
+			// Me llegaron todas las respuestas de los servidores
+			if (outstanding_reply == 0) {
+				debug("Dándole permiso");
+				MPI_Send(NULL, 0, MPI_INT, mi_cliente, TAG_OTORGADO, COMM_WORLD);
+			}
+		
+			break;
+	
 		case TAG_LIBERO:
 			assert(origen == mi_cliente);
 			debug("Mi cliente libera su acceso exclusivo");
@@ -116,17 +128,6 @@ void servidor(int mi_cliente)
 			
 			break;
 			
-		case SRV_REPLY:
-			debug("llego SRV_REPLY");
-			outstanding_reply -= 1;
-			
-			// Me llegaron todas las respuestas de los servidores
-			if (outstanding_reply == 0) {
-				debug("Dándole permiso");
-				MPI_Send(NULL, 0, MPI_INT, mi_cliente, TAG_OTORGADO, COMM_WORLD);
-			}
-		
-			break;
 
 		case TAG_TERMINE:
 			assert(origen == mi_cliente);
