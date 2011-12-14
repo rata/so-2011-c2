@@ -26,7 +26,8 @@ int main(int argc, char **argv)
 		long err = ptrace(PTRACE_TRACEME, NULL, NULL, NULL);
 		CHECK_ERROR(err, "PTRACE_TRACEME");
 
-		execvp(argv[1], argv + 1);
+		int err = execvp(argv[1], argv + 1);
+		CHECK_ERROR(err, "exec");
 	}
 
 	// XXX: Si child no es ni 0 ni -1, entonces soy el padre. Notar que como
