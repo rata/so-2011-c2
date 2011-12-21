@@ -1,0 +1,10 @@
+A modo de ejemplo, asi se puede leer y escribir en el chardev
+
+escribir:
+	echo "4"| sudo tee /dev/esprimo
+
+leer:
+	sudo dd if=/dev/esprimo count=1 bs=1 of=asd; cat asd
+
+En vez de "4" se puede usar cualquier otro numero, por supuesto :)
+La lectura permaneceria igual, sin importar qué numero se haya escrito
